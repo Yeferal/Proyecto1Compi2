@@ -1,0 +1,84 @@
+
+package analisis;
+import java_cup.runtime.*;
+import objetos.ErrorG;
+import java.util.ArrayList;
+
+%%
+%{
+    //coidgo de usuario en sintaxis java
+    public ArrayList<ErrorG> listaErrores = new  ArrayList<>();
+
+%}
+
+    //directivas
+%public 
+%class AnalizadorLexico
+%cupsym Simbolos
+%cup
+%char
+%line
+%column
+%full
+//%ignorecase
+//%unicode
+
+//expreciones regulares
+
+LetraMin            = ([a-zA-Z] | ñ )
+LetraMay            = ([A-Z] | Ñ )
+IDENTIFICADOR       = ({LetraMin}|{Numero}|{LetraMay})({LetraMin}|{Numero}|{LetraMay})+
+Digito              = [0-9]
+Numero              = {Digito} {Digito}*
+Espacio             = [\t\r]+
+Salto               = [\n]
+%%
+
+" "		{return new Symbol(Simbolos.ESPACIO , yycolumn, yyline, yytext());}
+nombre 		{return new Symbol(Simbolos.NOMBRE , yycolumn, yyline, yytext());}	//único dato obligatorio
+version		{return new Symbol(Simbolos.VERSION , yycolumn, yyline, yytext());}
+autor 		{return new Symbol(Simbolos.AUTOR , yycolumn, yyline, yytext());}
+lanzamiento 	{return new Symbol(Simbolos.LANZAMIENTO , yycolumn, yyline, yytext());}
+extensión 	{return new Symbol(Simbolos.EXTENSION , yycolumn, yyline, yytext());}
+":" 		{return new Symbol(Simbolos.DOS_PUNTOS , yycolumn, yyline, yytext());}
+";" 		{return new Symbol(Simbolos.PUNTO_COMA , yycolumn, yyline, yytext());}
+"."		{return new Symbol(Simbolos.PUNTO , yycolumn, yyline, yytext());}
+"%%"		{return new Symbol(Simbolos.SEPARACION , yycolumn, yyline, yytext());}
+"?"		{return new Symbol(Simbolos.INTERROGACION , yycolumn, yyline, yytext());}
+"*"		{return new Symbol(Simbolos.ASTERISCO , yycolumn, yyline, yytext());}
+"+"		{return new Symbol(Simbolos.MAS , yycolumn, yyline, yytext());}
+"β"		{return new Symbol(Simbolos.BETA , yycolumn, yyline, yytext());}
+"|"		{return new Symbol(Simbolos.LINEA , yycolumn, yyline, yytext());}
+"["		{return new Symbol(Simbolos.CORCHETE_A , yycolumn, yyline, yytext());}
+"]"		{return new Symbol(Simbolos.CORCHETE_C , yycolumn, yyline, yytext());}
+"("		{return new Symbol(Simbolos.PARENTESIS_A , yycolumn, yyline, yytext());}
+")"		{return new Symbol(Simbolos.PARENTESIS_C , yycolumn, yyline, yytext());}
+"-"		{return new Symbol(Simbolos.GUION , yycolumn, yyline, yytext());}
+"\\n"		{return new Symbol(Simbolos.SALTO_RESERV , yycolumn, yyline, yytext());}
+"\\t"		{return new Symbol(Simbolos.TAB_RESERV , yycolumn, yyline, yytext());}
+"\\b"		{return new Symbol(Simbolos.ESPACIO_BLANCO , yycolumn, yyline, yytext());}
+"\""		{return new Symbol(Simbolos.COMILLAS , yycolumn, yyline, yytext());}
+"="		{return new Symbol(Simbolos.IGUAL , yycolumn, yyline, yytext());}
+"&"		{return new Symbol(Simbolos.IGNORAR , yycolumn, yyline, yytext());}
+Terminal	{return new Symbol(Simbolos.TERMINAL , yycolumn, yyline, yytext());}
+no terminal	{return new Symbol(Simbolos.NO_TERMINAL , yycolumn, yyline, yytext());}
+","		{return new Symbol(Simbolos.COMA , yycolumn, yyline, yytext());}
+"::"		{return new Symbol(Simbolos.DOBLE_PUNTO , yycolumn, yyline, yytext());}
+"{"		{return new Symbol(Simbolos.LLAVES_A , yycolumn, yyline, yytext());}
+"}"		{return new Symbol(Simbolos.LLAVES_C , yycolumn, yyline, yytext());}
+"//"		{return new Symbol(Simbolos.COMENTARIO_SIMPLE , yycolumn, yyline, yytext());}
+"/*"		{return new Symbol(Simbolos.COMENTARIO_A , yycolumn, yyline, yytext());}
+"*/"		{return new Symbol(Simbolos.COMENTARIO_C , yycolumn, yyline, yytext());}
+
+
+<YYINITIAL> {
+    {Espacio}                       {/*Ignore*/}
+    ({Numero}|{Numero}"."{Numero})({Numero}"."{Numero})*  {System.out.println("Version: "+yytext()); return new Symbol(Simbolos.NUM_VERSION , yycolumn, yyline, yytext());}
+    ({Salto})                       {return new Symbol(Simbolos.SALTO_LINEA , yycolumn, yyline, yytext());}
+    .                               {System.out.println("error Lexico: "+"Columna: "+yycolumn+1+" linea: "+ yyline+1 + "Token: "+yytext());
+                                    //ErrorG e = new ErrorG(yyline+1, yycolumn+1,yytext(),"Lexico","Error Lexico token: " + yytext()+"   Linea: " + (yyline+1) + " ,    Columna: " + (yycolumn+1));
+                                    //listaErrores.add(e);
+                                    return new Symbol(Simbolos.CUALQUIER_SIM , yycolumn, yyline, yytext());
+                                    }
+    
+}
