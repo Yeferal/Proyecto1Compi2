@@ -1,1 +1,363 @@
+//codigo usuario
+package analisis;
+import java_cup.runtime.Symbol;
 
+
+//Codigo para el parser, variables, metodos
+parser code
+{:
+    
+    private Symbol s;
+    public void syntaxError(Symbol s){
+        this.s = s;
+    }
+    public Symbol getS(Symbol s){
+        return this.s = s;
+    }
+
+    public void setAccion(String tipo,String mensaje,String accion){
+            System.out.println(tipo+"         "+mensaje);
+        }
+
+    public void syntax_error(Symbol s){
+            if(s!=null){
+                //ErrorG e = new ErrorG(s.right,s.left,(String) s.value,"Sintactico","Error Sintaxis token: "+(String) s.value+" ------ Linea: " + (s.right+1) + ",   Columna: " + (s.left+1));
+                //listaErrores.add(e);
+                setAccion("ERROR","Error Sintaxis token: Linea: " + (s.right+1) + ",   Columna: " + (s.left+1) + ",  Simbolo: " + s.value, "");
+            }
+    }
+
+:}
+
+//Coidgo para las acciones gramaticales
+
+action code
+{:
+    
+:}
+
+//Declaraciones 
+terminal IDENTIFICADOR, NUMERO,  NUM_VER, LETRA, DOBLE_PUNTO, NUM_VERSION; 
+terminal DOS_PUNTOS, PUNTO_COMA, PUNTO, SEPARACION, COMENTARIO_SIMPLE, COMENTARIO_A, COMENTARIO_C;
+terminal NOMBRE, VERSION, AUTOR, LANZAMIENTO, EXTENSION;
+terminal INTERROGACION, ASTERISCO, MAS, BETA, CORCHETE_A, CORCHETE_C, PARENTESIS_A;
+terminal PARENTESIS_C, GUION, SALTO_RESERV, TAB_RESERV, ESPACIO_BLANCO, COMILLAS, IGUAL, IGNORAR, LINEA;
+terminal TERMINAL, NO_TERMINAL, COMA, SALTO_LINEA, LLAVES_A, LLAVES_C, CUALQUIER_SIM;
+
+
+// declaracion no terminales
+non terminal INICIO, bloque_inf, datos_info, saltos, lo_que_sea_1, lo_que_sea_v , comentario_linea;
+non terminal comentario_varias_lineas, num_version, bloque_code, lo_que_sea_bloque_code, bloque_exp_regular;
+non terminal estructura_exp_regular, exp_regular, bloque_simbolos, bloque_gramatica, letras_min, letras_may;
+non terminal estructura_gramatica, estructura_produccion, valor , estructura_semantica, reglas_semanticas, lo_quesea_semantica;
+non terminal saltos1, cadena_identificadores, salto_simple, lo_que_sea_exp, ids;
+
+
+//presedencia de menor a mayor
+//precedence left IGUAL_IGUAL,MENOR_QUE,MAYOR_QUE,MAYOR_IGUAL,MENOR_IGUAL, DIFERENTE,PUNTO_PUNTO, CORCHETE_A, CORCHETE_C;
+precedence left ASTERISCO, INTERROGACION, MAS, NUMERO, LETRA, PARENTESIS_A, PARENTESIS_C;
+precedence left BETA, LINEA;
+
+
+
+start with INICIO;
+
+//Reglas Semanticas
+
+
+INICIO ::=   saltos bloque_inf 
+             SEPARACION bloque_code  
+             SEPARACION saltos bloque_exp_regular 
+             SEPARACION saltos bloque_simbolos 
+             SEPARACION saltos bloque_gramatica
+            |IDENTIFICADOR IDENTIFICADOR ;
+
+saltos1 ::= SALTO_LINEA saltos1
+	| ;
+
+salto_simple ::= SALTO_LINEA salto_simple
+                | comentario_linea salto_simple
+                | comentario_varias_lineas salto_simple
+                | SALTO_LINEA;
+
+saltos ::= SALTO_LINEA saltos
+	| comentario_linea saltos
+	| comentario_varias_lineas saltos
+	| ;
+
+comentario_linea ::= COMENTARIO_SIMPLE lo_que_sea_1 SALTO_LINEA ;
+
+comentario_varias_lineas ::= COMENTARIO_A lo_que_sea_v COMENTARIO_C ;
+
+lo_que_sea_1 ::= CUALQUIER_SIM:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |IDENTIFICADOR:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |NUMERO:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |NUM_VER:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |LETRA:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |DOBLE_PUNTO:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |NUM_VERSION:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |DOS_PUNTOS:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |PUNTO_COMA:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |PUNTO:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |NOMBRE:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |VERSION:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |AUTOR:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |LANZAMIENTO:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |EXTENSION:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |INTERROGACION:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |ASTERISCO:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |MAS:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |BETA:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |CORCHETE_A:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |CORCHETE_C:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |PARENTESIS_A:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |PARENTESIS_C:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |GUION:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |SALTO_RESERV:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |TAB_RESERV:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |ESPACIO_BLANCO:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |COMILLAS:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |IGUAL:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |IGNORAR:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |LINEA:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |TERMINAL:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |NO_TERMINAL:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |COMA:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |LLAVES_A:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |LLAVES_C:a lo_que_sea_1:b {:RESULT = (String)a+(String)b;:}
+                |;
+
+lo_que_sea_v ::= CUALQUIER_SIM:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |IDENTIFICADOR:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |NUMERO:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |NUM_VER:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |LETRA:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |DOBLE_PUNTO:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |NUM_VERSION:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |DOS_PUNTOS:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |PUNTO_COMA:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |PUNTO:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |NOMBRE:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |VERSION:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |AUTOR:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |LANZAMIENTO:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |EXTENSION:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |INTERROGACION:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |ASTERISCO:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |MAS:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |BETA:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |CORCHETE_A:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |CORCHETE_C:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |PARENTESIS_A:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |PARENTESIS_C:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |GUION:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |SALTO_RESERV:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |TAB_RESERV:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |ESPACIO_BLANCO:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |COMILLAS:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |IGUAL:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |IGNORAR:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |LINEA:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |TERMINAL:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |NO_TERMINAL:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |COMA:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |SALTO_LINEA:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |LLAVES_A:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |LLAVES_C:a lo_que_sea_v:b {:RESULT = (String)a+(String)b;:}
+                |;
+
+
+bloque_inf ::=   datos_info bloque_inf
+                |datos_info;
+
+num_version ::=  NUMERO
+                |NUMERO PUNTO num_version;
+
+datos_info ::=   NOMBRE DOS_PUNTOS cadena_identificadores PUNTO_COMA saltos1
+		|VERSION DOS_PUNTOS num_version PUNTO_COMA saltos1
+		|AUTOR DOS_PUNTOS cadena_identificadores PUNTO_COMA saltos1
+		|LANZAMIENTO DOS_PUNTOS NUMERO PUNTO_COMA saltos1
+		|EXTENSION DOS_PUNTOS IDENTIFICADOR PUNTO_COMA saltos1;
+
+cadena_identificadores ::=   IDENTIFICADOR cadena_identificadores
+                            | ;
+
+bloque_code ::= lo_que_sea_bloque_code ;
+
+lo_que_sea_bloque_code ::= CUALQUIER_SIM:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |IDENTIFICADOR:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |NUMERO:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |NUM_VER:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |LETRA:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |DOBLE_PUNTO:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |NUM_VERSION:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |DOS_PUNTOS:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |PUNTO_COMA:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |PUNTO:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |NOMBRE:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |VERSION:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |AUTOR:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |LANZAMIENTO:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |EXTENSION:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |INTERROGACION:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |ASTERISCO:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |MAS:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |BETA:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |CORCHETE_A:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |CORCHETE_C:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |PARENTESIS_A:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |PARENTESIS_C:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |GUION:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |SALTO_RESERV:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |TAB_RESERV:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |ESPACIO_BLANCO:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |COMILLAS:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |IGUAL:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |IGNORAR:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |LINEA:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |TERMINAL:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |NO_TERMINAL:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |COMA:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |LLAVES_A:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |LLAVES_C:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |COMENTARIO_SIMPLE:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |COMENTARIO_A:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |COMENTARIO_C:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |SALTO_LINEA:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
+                |;
+
+bloque_exp_regular ::= estructura_exp_regular ;
+
+estructura_exp_regular ::=   IDENTIFICADOR IGUAL exp_regular PUNTO_COMA salto_simple estructura_exp_regular
+                            |IGNORAR IGUAL exp_regular PUNTO_COMA salto_simple estructura_exp_regular 
+                            | ;
+
+exp_regular ::=  PARENTESIS_A exp_regular PARENTESIS_C exp_regular
+		|CORCHETE_A exp_regular CORCHETE_C exp_regular
+		|CORCHETE_A NUMERO GUION NUMERO CORCHETE_C exp_regular
+		|CORCHETE_A LETRA GUION LETRA CORCHETE_C exp_regular
+		|exp_regular INTERROGACION exp_regular
+		|exp_regular ASTERISCO exp_regular
+		|exp_regular MAS exp_regular
+		|exp_regular BETA exp_regular
+		|exp_regular LINEA exp_regular
+		|SALTO_RESERV exp_regular
+		|TAB_RESERV  exp_regular 
+		|ESPACIO_BLANCO exp_regular
+		|COMILLAS lo_que_sea_exp COMILLAS exp_regular
+		|CUALQUIER_SIM exp_regular
+		|IDENTIFICADOR exp_regular
+		|PUNTO exp_regular
+		|;
+
+lo_que_sea_exp ::= CUALQUIER_SIM:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |IDENTIFICADOR:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |NUMERO:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |NUM_VER:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |LETRA:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |DOBLE_PUNTO:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |NUM_VERSION:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |DOS_PUNTOS:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |PUNTO_COMA:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |PUNTO:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |NOMBRE:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |VERSION:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |AUTOR:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |LANZAMIENTO:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |EXTENSION:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |INTERROGACION:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |ASTERISCO:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |MAS:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |BETA:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |CORCHETE_A:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |CORCHETE_C:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |PARENTESIS_A:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |PARENTESIS_C:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |GUION:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |SALTO_RESERV:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |TAB_RESERV:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |ESPACIO_BLANCO:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |IGUAL:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |IGNORAR:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |LINEA:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |TERMINAL:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |NO_TERMINAL:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |COMA:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |SALTO_LINEA:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |LLAVES_A:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |LLAVES_C:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
+                |;
+
+bloque_simbolos ::=  TERMINAL letras_min PUNTO_COMA saltos bloque_simbolos
+                    | NO_TERMINAL letras_may PUNTO_COMA saltos bloque_simbolos
+                    | ;
+
+letras_min ::=   IDENTIFICADOR COMA letras_min
+		|LETRA COMA letras_min
+		|LETRA
+		|IDENTIFICADOR;
+
+letras_may ::=   IDENTIFICADOR COMA letras_may
+                |LETRA COMA letras_may
+		|LETRA
+		|IDENTIFICADOR;
+
+
+bloque_gramatica ::= estructura_gramatica;
+
+estructura_gramatica ::= ids DOBLE_PUNTO estructura_produccion estructura_semantica PUNTO_COMA saltos1 estructura_gramatica
+                        |ids DOBLE_PUNTO estructura_produccion estructura_semantica PUNTO_COMA;
+
+estructura_produccion ::= ids valor estructura_produccion
+                        | ids valor;
+
+ids ::= IDENTIFICADOR
+        |LETRA;
+
+valor ::=    DOS_PUNTOS ids
+            |;
+
+estructura_semantica ::= LLAVES_A reglas_semanticas LLAVES_C;
+
+reglas_semanticas ::= lo_quesea_semantica;
+
+
+lo_quesea_semantica ::= CUALQUIER_SIM:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |IDENTIFICADOR:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |NUMERO:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |NUM_VER:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |LETRA:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |DOBLE_PUNTO:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |NUM_VERSION:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |DOS_PUNTOS:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |PUNTO_COMA:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |PUNTO:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |NOMBRE:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |VERSION:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |AUTOR:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |LANZAMIENTO:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |EXTENSION:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |INTERROGACION:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |ASTERISCO:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |MAS:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |BETA:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |CORCHETE_A:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |CORCHETE_C:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |PARENTESIS_A:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |PARENTESIS_C:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |GUION:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |SALTO_RESERV:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |TAB_RESERV:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |ESPACIO_BLANCO:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |COMILLAS:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |IGUAL:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |IGNORAR:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |LINEA:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |TERMINAL:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |NO_TERMINAL:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |COMA:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |COMENTARIO_SIMPLE:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |COMENTARIO_A:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |COMENTARIO_C:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |SALTO_LINEA:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |;

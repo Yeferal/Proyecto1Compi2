@@ -1,24 +1,120 @@
 
 package ventanas;
 
+import archivos.Archivo;
 import java.awt.Font;
+import java.io.File;
+import java.util.ArrayList;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import objetos.ArchivoExtension;
+import proyecto1compi2.NumeroLinea;
 
 public class VentanaInicio extends javax.swing.JFrame {
-
+    
+    private int indiceTabbed;
+    private Archivo archivo = new Archivo();
+    private ArrayList<ArchivoExtension> listaArchivos = new ArrayList<>();
     
     public VentanaInicio() {
         initComponents();
         this.setLocationRelativeTo(null);
-        labelFilCol.setText("Fila: "+1+",  Columna: "+2);
-        JTextArea area = new JTextArea();
-        area.setFont(new Font("NORMAL", Font.PLAIN, 14));
         
-        tabbedPanel.addTab("Eje 1.java",area);
+//        JScrollPane j = new JScrollPane();
+//            JTextArea jArea = new JTextArea();
+//            jArea.setFont(new Font("NORMAL", NORMAL, 15));
+//            NumeroLinea nL = new NumeroLinea(jArea);
+//            jArea.setText("asfsaf");
+//            j.setRowHeaderView(nL);
+//            j.setViewportView(jArea);
+//            tabbedPanel.addTab("prueba", j);
     }
     
+    private void crearArchivo(String nombre){
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.showOpenDialog(this);
+        File file = fileChooser.getSelectedFile();
+        if (file!=null) {
+            String ruta = file.getPath()+"/"+nombre;
+            System.out.println(ruta);
+            archivo.crearArchivo(ruta, " ");
+            ArchivoExtension ar = new ArchivoExtension(nombre, ruta);
+            verificarArchivo(ar, nombre);
+        }
+    }
     
+    private void verificarArchivo(ArchivoExtension ar, String nombre){
+        boolean estado = false;
+        int index = 0;
+        for (int i = 0; i < listaArchivos.size(); i++) {
+            if(listaArchivos.get(i).getNombre().equals(ar.getNombre())){
+                estado = true;
+                index = i;
+                break;
+            }
+        }
+        
+        if(estado){
+            tabbedPanel.remove(index);
+            listaArchivos.remove(index);
+            listaArchivos.add(ar);
+            JScrollPane j = new JScrollPane();
+            JTextArea jArea = new JTextArea();
+            jArea.addCaretListener(new CaretListener() {
+                @Override
+                public void caretUpdate(CaretEvent e) {
+                    JTextArea editArea = (JTextArea) e.getSource();
+                    int linea = 1,columna = 1;
+                    try {
+                        int carePos = editArea.getCaretPosition();
+                        linea = editArea.getLineOfOffset(carePos);
+                        columna = carePos - editArea.getLineStartOffset(linea);
+                        linea +=1;
+                        columna +=1;
+                    } catch (Exception ex) {
+                    }
+                    labelFilCol.setText("Fila: "+linea+",  Columna: "+columna);
+                }
+            });
+            NumeroLinea nL = new NumeroLinea(jArea);
+            jArea.setText(archivo.leerArchivo(ar.getPath()));
+            j.setRowHeaderView(nL);
+            j.setViewportView(jArea);
+            tabbedPanel.addTab(nombre, j);
+            
+        }else{
+            listaArchivos.add(ar);
+            JScrollPane j = new JScrollPane();
+            JTextArea jArea = new JTextArea();
+            jArea.addCaretListener(new CaretListener() {
+                @Override
+                public void caretUpdate(CaretEvent e) {
+                    JTextArea editArea = (JTextArea) e.getSource();
+                    int linea = 1,columna = 1;
+                    try {
+                        int carePos = editArea.getCaretPosition();
+                        linea = editArea.getLineOfOffset(carePos);
+                        columna = carePos - editArea.getLineStartOffset(linea);
+                        linea +=1;
+                        columna +=1;
+                    } catch (Exception ex) {
+                    }
+                    labelFilCol.setText("Fila: "+linea+",  Columna: "+columna);
+                }
+            });
+            NumeroLinea nL = new NumeroLinea(jArea);
+            jArea.setText(archivo.leerArchivo(ar.getPath()));
+            j.setRowHeaderView(nL);
+            j.setViewportView(jArea);
+            tabbedPanel.addTab(nombre, j);
+        }
+    }
 
     
     @SuppressWarnings("unchecked")
@@ -43,10 +139,15 @@ public class VentanaInicio extends javax.swing.JFrame {
         menuVer = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new java.awt.BorderLayout());
 
         labelFilCol.setFont(new java.awt.Font("Tahoma", 3, 14)); // NOI18N
         labelFilCol.setForeground(new java.awt.Color(255, 51, 51));
+
+        tabbedPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabbedPanelMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
         panel.setLayout(panelLayout);
@@ -75,6 +176,7 @@ public class VentanaInicio extends javax.swing.JFrame {
 
         menuArchivo.setText("Archivo");
 
+        menuItemNuevo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         menuItemNuevo.setText("Nuevo");
         menuItemNuevo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -83,16 +185,40 @@ public class VentanaInicio extends javax.swing.JFrame {
         });
         menuArchivo.add(menuItemNuevo);
 
+        menuItemAbrir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         menuItemAbrir.setText("Abrir");
+        menuItemAbrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemAbrirActionPerformed(evt);
+            }
+        });
         menuArchivo.add(menuItemAbrir);
 
+        menuItemGuardar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         menuItemGuardar.setText("Guardar");
+        menuItemGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemGuardarActionPerformed(evt);
+            }
+        });
         menuArchivo.add(menuItemGuardar);
 
+        menuItemGuardarComo.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         menuItemGuardarComo.setText("Guardar Como");
+        menuItemGuardarComo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemGuardarComoActionPerformed(evt);
+            }
+        });
         menuArchivo.add(menuItemGuardarComo);
 
+        menuItemSalir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_X, java.awt.event.InputEvent.CTRL_MASK));
         menuItemSalir.setText("Salir");
+        menuItemSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSalirActionPerformed(evt);
+            }
+        });
         menuArchivo.add(menuItemSalir);
 
         menuBar.add(menuArchivo);
@@ -122,8 +248,57 @@ public class VentanaInicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void menuItemNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemNuevoActionPerformed
-        // TODO add your handling code here:
+        String nombreArchivo = JOptionPane.showInputDialog("Nombre del archivo\n\nNOTA: debe agregarle la extension\n\n");
+        if(nombreArchivo!=null){
+            crearArchivo(nombreArchivo);
+        }else{
+            System.out.println("es vacio");
+        }
     }//GEN-LAST:event_menuItemNuevoActionPerformed
+
+    private void tabbedPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabbedPanelMouseClicked
+        indiceTabbed = tabbedPanel.getSelectedIndex();
+    }//GEN-LAST:event_tabbedPanelMouseClicked
+
+    private void menuItemAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAbrirActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        //FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos", "lnz", "clrs", "tmp", "pnt");
+        //fileChooser.setFileFilter(filter);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.showOpenDialog(this);
+        File file = fileChooser.getSelectedFile();
+        if(file!=null){
+            String ruta = file.getPath();
+            String nombreA = file.getName();
+            String extencion = ruta.substring(ruta.length()-4, ruta.length());
+            verificarArchivo(new ArchivoExtension(nombreA, ruta), nombreA);
+        }
+    }//GEN-LAST:event_menuItemAbrirActionPerformed
+
+    private void menuItemGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemGuardarActionPerformed
+        if(listaArchivos.size()>0){
+            for (int i = 0; i < listaArchivos.size(); i++) {
+                JScrollPane jAux = (JScrollPane) tabbedPanel.getComponent(i);
+                JTextArea areaAux = (JTextArea) jAux.getViewport().getComponent(0);
+                archivo.escribir(areaAux.getText(), listaArchivos.get(i).getPath());
+            }
+
+            if(listaArchivos.size()>0){
+                JOptionPane.showMessageDialog(null, "Se Guardaron los cambio Correctamente");
+            }
+        }
+    }//GEN-LAST:event_menuItemGuardarActionPerformed
+
+    private void menuItemGuardarComoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemGuardarComoActionPerformed
+        
+        
+        
+        
+    }//GEN-LAST:event_menuItemGuardarComoActionPerformed
+
+    private void menuItemSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSalirActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_menuItemSalirActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
