@@ -13,26 +13,23 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import objetos.ArchivoExtension;
+import objetos.Lenguaje;
 import proyecto1compi2.NumeroLinea;
 
 public class VentanaInicio extends javax.swing.JFrame {
     
-    private int indiceTabbed;
+    public int indiceTabbed;
+    private VentanaGuardar ventanaGuardar = new VentanaGuardar(this);
     private Archivo archivo = new Archivo();
-    private ArrayList<ArchivoExtension> listaArchivos = new ArrayList<>();
+    public ArrayList<ArchivoExtension> listaArchivos = new ArrayList<>();
+    private ArrayList<Lenguaje> listaLenguajes = new ArrayList<>();
     
     public VentanaInicio() {
         initComponents();
         this.setLocationRelativeTo(null);
-        
-//        JScrollPane j = new JScrollPane();
-//            JTextArea jArea = new JTextArea();
-//            jArea.setFont(new Font("NORMAL", NORMAL, 15));
-//            NumeroLinea nL = new NumeroLinea(jArea);
-//            jArea.setText("asfsaf");
-//            j.setRowHeaderView(nL);
-//            j.setViewportView(jArea);
-//            tabbedPanel.addTab("prueba", j);
+        listaLenguajes.add(new Lenguaje("Java"));
+        listaLenguajes.add(new Lenguaje("C++"));
+        listaLenguajes.add(new Lenguaje("Python"));
     }
     
     private void crearArchivo(String nombre){
@@ -44,9 +41,34 @@ public class VentanaInicio extends javax.swing.JFrame {
             String ruta = file.getPath()+"/"+nombre;
             System.out.println(ruta);
             archivo.crearArchivo(ruta, " ");
-            ArchivoExtension ar = new ArchivoExtension(nombre, ruta);
-            verificarArchivo(ar, nombre);
         }
+    }
+    
+    private void generarPestania(ArchivoExtension ar, String nombre){
+        listaArchivos.add(ar);
+            JScrollPane j = new JScrollPane();
+            JTextArea jArea = new JTextArea();
+            jArea.addCaretListener(new CaretListener() {
+                @Override
+                public void caretUpdate(CaretEvent e) {
+                    JTextArea editArea = (JTextArea) e.getSource();
+                    int linea = 1,columna = 1;
+                    try {
+                        int carePos = editArea.getCaretPosition();
+                        linea = editArea.getLineOfOffset(carePos);
+                        columna = carePos - editArea.getLineStartOffset(linea);
+                        linea +=1;
+                        columna +=1;
+                    } catch (Exception ex) {
+                    }
+                    labelFilCol.setText("Fila: "+linea+",  Columna: "+columna);
+                }
+            });
+            NumeroLinea nL = new NumeroLinea(jArea);
+            jArea.setText("");
+            j.setRowHeaderView(nL);
+            j.setViewportView(jArea);
+            tabbedPanel.addTab(nombre, j);
     }
     
     private void verificarArchivo(ArchivoExtension ar, String nombre){
@@ -116,6 +138,21 @@ public class VentanaInicio extends javax.swing.JFrame {
         }
     }
 
+    
+    private void guardarComo(String nombre){
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.showOpenDialog(this);
+        File file = fileChooser.getSelectedFile();
+        if (file!=null) {
+            String ruta = file.getPath()+"/"+nombre;
+            JScrollPane jAux = (JScrollPane) tabbedPanel.getComponent(indiceTabbed);
+            JTextArea areaAux = (JTextArea) jAux.getViewport().getComponent(0);
+            archivo.crearArchivo(ruta, areaAux.getText());
+            JOptionPane.showMessageDialog(null, "Se Guardo el nuevo archivo");
+
+        }
+    }
     
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -248,12 +285,8 @@ public class VentanaInicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void menuItemNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemNuevoActionPerformed
-        String nombreArchivo = JOptionPane.showInputDialog("Nombre del archivo\n\nNOTA: debe agregarle la extension\n\n");
-        if(nombreArchivo!=null){
-            crearArchivo(nombreArchivo);
-        }else{
-            System.out.println("es vacio");
-        }
+
+            generarPestania(new ArchivoExtension("Sin nombre", null),"Sin nombre");
     }//GEN-LAST:event_menuItemNuevoActionPerformed
 
     private void tabbedPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabbedPanelMouseClicked
@@ -262,35 +295,49 @@ public class VentanaInicio extends javax.swing.JFrame {
 
     private void menuItemAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemAbrirActionPerformed
         JFileChooser fileChooser = new JFileChooser();
-        //FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivos", "lnz", "clrs", "tmp", "pnt");
-        //fileChooser.setFileFilter(filter);
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.showOpenDialog(this);
         File file = fileChooser.getSelectedFile();
         if(file!=null){
             String ruta = file.getPath();
             String nombreA = file.getName();
-            String extencion = ruta.substring(ruta.length()-4, ruta.length());
-            verificarArchivo(new ArchivoExtension(nombreA, ruta), nombreA);
+            System.out.println("Nombre: "+nombreA);
+            String [] arreglo = nombreA.split("\\.");
+            ArchivoExtension a = new ArchivoExtension(nombreA, ruta);
+            if(arreglo.length>1){
+                System.out.println("extesion: "+arreglo[arreglo.length-1]);
+                a.setExtension(arreglo[arreglo.length-1]);
+            }else{
+                System.out.println("No tiene extension: "+arreglo[0]);
+                a.setExtension("");
+            }
+            verificarArchivo(a, nombreA);
         }
     }//GEN-LAST:event_menuItemAbrirActionPerformed
 
     private void menuItemGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemGuardarActionPerformed
         if(listaArchivos.size()>0){
-            for (int i = 0; i < listaArchivos.size(); i++) {
-                JScrollPane jAux = (JScrollPane) tabbedPanel.getComponent(i);
-                JTextArea areaAux = (JTextArea) jAux.getViewport().getComponent(0);
-                archivo.escribir(areaAux.getText(), listaArchivos.get(i).getPath());
-            }
-
-            if(listaArchivos.size()>0){
-                JOptionPane.showMessageDialog(null, "Se Guardaron los cambio Correctamente");
-            }
+            ventanaGuardar.setListaLenguajes(listaLenguajes);
+            ventanaGuardar.llenarTabla();
+            ventanaGuardar.setVisible(true);
+        }else{
+            JOptionPane.showMessageDialog(null, "No existe ningun archivo");
         }
+
     }//GEN-LAST:event_menuItemGuardarActionPerformed
 
     private void menuItemGuardarComoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemGuardarComoActionPerformed
+        String nombreNuevo = JOptionPane.showInputDialog("Escribe el nuevo nombre del archivo");
+        if(nombreNuevo!=null){
+            String f[] = listaArchivos.get(indiceTabbed).getNombre().split("\\.");
+            if(!f[0].equals(nombreNuevo)){
+                guardarComo(nombreNuevo);
+            }else{
+                JOptionPane.showMessageDialog(null, "El nombre del arhcivo es el mismo");
+            }
+        }
         
+
         
         
         
@@ -317,6 +364,6 @@ public class VentanaInicio extends javax.swing.JFrame {
     private javax.swing.JMenu menuLenguaje;
     private javax.swing.JMenu menuVer;
     private javax.swing.JPanel panel;
-    private javax.swing.JTabbedPane tabbedPanel;
+    public javax.swing.JTabbedPane tabbedPanel;
     // End of variables declaration//GEN-END:variables
 }

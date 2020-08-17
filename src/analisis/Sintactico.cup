@@ -1,6 +1,7 @@
 //codigo usuario
 package analisis;
 import java_cup.runtime.Symbol;
+import objetos.*;
 
 
 //Codigo para el parser, variables, metodos
@@ -33,6 +34,7 @@ parser code
 
 action code
 {:
+    ManejadorNodos manejadorNodos = new ManejadorNodos();
     
 :}
 
@@ -232,23 +234,40 @@ estructura_exp_regular ::=   IDENTIFICADOR IGUAL exp_regular PUNTO_COMA salto_si
                             |IGNORAR IGUAL exp_regular PUNTO_COMA salto_simple estructura_exp_regular 
                             | ;
 
-exp_regular ::=  PARENTESIS_A exp_regular PARENTESIS_C exp_regular
-		|CORCHETE_A exp_regular CORCHETE_C exp_regular
-		|CORCHETE_A NUMERO GUION NUMERO CORCHETE_C exp_regular
-		|CORCHETE_A LETRA GUION LETRA CORCHETE_C exp_regular
-		|exp_regular INTERROGACION exp_regular
-		|exp_regular ASTERISCO exp_regular
-		|exp_regular MAS exp_regular
-		|exp_regular BETA exp_regular
-		|exp_regular LINEA exp_regular
-		|SALTO_RESERV exp_regular
-		|TAB_RESERV  exp_regular 
-		|ESPACIO_BLANCO exp_regular
-		|COMILLAS lo_que_sea_exp COMILLAS exp_regular
-		|CUALQUIER_SIM exp_regular
-		|IDENTIFICADOR exp_regular
-		|PUNTO exp_regular
-		|;
+exp_regular ::=  PARENTESIS_A exp_regular:a PARENTESIS_C exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b)); RESULT = (Nodo) node1;:}
+		|CORCHETE_A exp_regular:a CORCHETE_C exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b)); RESULT = (Nodo) node1;:}
+		|CORCHETE_A NUMERO GUION NUMERO CORCHETE_C exp_regular {::}
+		|CORCHETE_A LETRA GUION LETRA CORCHETE_C exp_regular {::}
+		|exp_regular:a INTERROGACION exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, new Nodo(8,"",true),4,"|",true); 
+                                Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo) b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b));
+                                RESULT = (Nodo) node2;
+                 :}
+		|exp_regular:a ASTERISCO exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, null,2,"*",true); 
+                                Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo) b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b));
+                                RESULT = (Nodo) node2;
+                 :}
+		|exp_regular:a MAS exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, null,3,"+",true); 
+                                Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo) b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b));
+                                RESULT = (Nodo) node2;
+                 :}
+		|exp_regular:a BETA exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,4,"|",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b)); RESULT = (Nodo) node1;:}
+		|exp_regular:a LINEA exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,4,"|",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b)); RESULT = (Nodo) node1;:}
+		|SALTO_RESERV:a exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1;:}
+		|TAB_RESERV:a  exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1;:}
+		|ESPACIO_BLANCO:a exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1; :}
+		|COMILLAS lo_que_sea_exp:a COMILLAS exp_regular:b {:
+                    Nodo node1 = manejadorNodos.generarNodosTexto((String) a);
+                    Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b)); 
+                    RESULT = (Nodo) node2;
+                :}
+		|CUALQUIER_SIM:a exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1; :}
+		|ids:a exp_regular:b {:
+                    Nodo node1 = manejadorNodos.generarNodosTexto((String) a);
+                    Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b)); 
+                    RESULT = (Nodo) node2;
+                :}
+		|PUNTO:a exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1; :}
+		| {: Nodo node = new Nodo(6,"#",false); RESULT = (Nodo) node; :};
 
 lo_que_sea_exp ::= CUALQUIER_SIM:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
                 |IDENTIFICADOR:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}

@@ -4,8 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/E:/LENOVO-PC/Documents/NetBeansProjects/Compi%202/Proyecto1Compi2/src/ventanas/VentanaInicio.java</file>
-            <file>file:/E:/LENOVO-PC/Documents/NetBeansProjects/Compi%202/Proyecto1Compi2/src/objetos/ArchivoExtension.java</file>
             <file>file:/E:/LENOVO-PC/Documents/NetBeansProjects/Compi%202/Proyecto1Compi2/src/proyecto1compi2/Main.java</file>
+            <file>file:/E:/LENOVO-PC/Documents/NetBeansProjects/Compi%202/Proyecto1Compi2/src/analisis/Sintactico.cup</file>
+            <file>file:/E:/LENOVO-PC/Documents/NetBeansProjects/Compi%202/Proyecto1Compi2/src/objetos/Nodo.java</file>
+            <file>file:/E:/LENOVO-PC/Documents/NetBeansProjects/Compi%202/Proyecto1Compi2/src/analisis/AnalizadorSintactico.java</file>
+            <file>file:/E:/LENOVO-PC/Documents/NetBeansProjects/Compi%202/Proyecto1Compi2/src/objetos/ManejadorNodos.java</file>
         </group>
     </open-files>
 </project-private>

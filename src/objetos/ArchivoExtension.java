@@ -3,7 +3,7 @@ package objetos;
 
 public class ArchivoExtension {
     
-    private String nombre,path;
+    private String nombre,path, extension;
 
     public ArchivoExtension(String nombre, String path) {
         this.nombre = nombre;
@@ -25,6 +25,15 @@ public class ArchivoExtension {
     public void setPath(String path) {
         this.path = path;
     }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
+    
     
     
 }
