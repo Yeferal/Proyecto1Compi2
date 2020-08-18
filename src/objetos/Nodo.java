@@ -20,6 +20,7 @@ public class Nodo {
     private String lexema;
     private ArrayList<Integer> primeros = new ArrayList<>();
     private ArrayList<Integer> siguientes = new ArrayList<>();
+    private ArrayList<String> listaCaracteres = new ArrayList<>();
     private boolean anulable;
     private Nodo derechaNodo, izquierdaNodo, padreNodo;
 
@@ -27,9 +28,30 @@ public class Nodo {
         this.tipo = tipo;
         this.lexema = lexema;
         this.anulable = anulable;
+        listaCaracteres.add(lexema);
     }
     
-    
+    public void generarListaCaracteres(String a, String b){
+        listaCaracteres.clear();
+        
+        char c1 = a.charAt(0);
+        char c2 = b.charAt(0);
+        int v1 = (int) c1;
+        int v2 = (int) c2;
+        for (int i = v1; i < v2+1; i++) {
+            char c = (char)i;
+            listaCaracteres.add(Character.toString(c));
+        }
+        
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getTipo() {
         return tipo;

@@ -2,12 +2,13 @@
 package analisis;
 import java_cup.runtime.Symbol;
 import objetos.*;
+import java.util.ArrayList;
 
 
 //Codigo para el parser, variables, metodos
 parser code
 {:
-    
+    public ArrayList<ExpresionRegular> listaExpReg = new ArrayList<>();
     private Symbol s;
     public void syntaxError(Symbol s){
         this.s = s;
@@ -35,6 +36,9 @@ parser code
 action code
 {:
     ManejadorNodos manejadorNodos = new ManejadorNodos();
+    ArrayList<Arbol> listaArboles = new ArrayList<>();
+    ArrayList<ExpresionRegular> listaExpReg = new ArrayList<>();
+    Arbol arbol;
     
 :}
 
@@ -57,8 +61,9 @@ non terminal saltos1, cadena_identificadores, salto_simple, lo_que_sea_exp, ids;
 
 //presedencia de menor a mayor
 //precedence left IGUAL_IGUAL,MENOR_QUE,MAYOR_QUE,MAYOR_IGUAL,MENOR_IGUAL, DIFERENTE,PUNTO_PUNTO, CORCHETE_A, CORCHETE_C;
-precedence left ASTERISCO, INTERROGACION, MAS, NUMERO, LETRA, PARENTESIS_A, PARENTESIS_C;
-precedence left BETA, LINEA;
+precedence left CORCHETE_A, CORCHETE_C;
+precedence left ASTERISCO, INTERROGACION, MAS, PARENTESIS_A, PARENTESIS_C, LINEA;
+//precedence left BETA, LINEA;
 
 
 
@@ -71,7 +76,7 @@ INICIO ::=   saltos bloque_inf
              SEPARACION bloque_code  
              SEPARACION saltos bloque_exp_regular 
              SEPARACION saltos bloque_simbolos 
-             SEPARACION saltos bloque_gramatica
+             SEPARACION saltos bloque_gramatica {:parser.listaExpReg = listaExpReg; :}
             |IDENTIFICADOR IDENTIFICADOR ;
 
 saltos1 ::= SALTO_LINEA saltos1
@@ -226,18 +231,54 @@ lo_que_sea_bloque_code ::= CUALQUIER_SIM:a lo_que_sea_bloque_code:b {:RESULT = (
                 |COMENTARIO_A:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
                 |COMENTARIO_C:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
                 |SALTO_LINEA:a lo_que_sea_bloque_code:b {:RESULT = (String)a+(String)b;:}
-                |;
+                |{:RESULT = (String)"";:};
 
 bloque_exp_regular ::= estructura_exp_regular ;
 
-estructura_exp_regular ::=   IDENTIFICADOR IGUAL exp_regular PUNTO_COMA salto_simple estructura_exp_regular
-                            |IGNORAR IGUAL exp_regular PUNTO_COMA salto_simple estructura_exp_regular 
+estructura_exp_regular ::=   IDENTIFICADOR:a IGUAL exp_regular:b PUNTO_COMA {: ExpresionRegular exp = new ExpresionRegular(new Arbol((Nodo)b),(String)a); listaExpReg.add(exp);:} salto_simple estructura_exp_regular
+                            |IGNORAR:a IGUAL exp_regular:b PUNTO_COMA {: ExpresionRegular exp = new ExpresionRegular(new Arbol((Nodo)b),(String)a); listaExpReg.add(exp);:} salto_simple estructura_exp_regular 
                             | ;
 
 exp_regular ::=  PARENTESIS_A exp_regular:a PARENTESIS_C exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b)); RESULT = (Nodo) node1;:}
 		|CORCHETE_A exp_regular:a CORCHETE_C exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b)); RESULT = (Nodo) node1;:}
-		|CORCHETE_A NUMERO GUION NUMERO CORCHETE_C exp_regular {::}
-		|CORCHETE_A LETRA GUION LETRA CORCHETE_C exp_regular {::}
+		|CORCHETE_A NUMERO:a GUION NUMERO:b CORCHETE_C exp_regular:c {:
+                    if(manejadorNodos.verificarTamanio((String)a, (String)b)){
+                        if(manejadorNodos.isMenor((String)a, (String)b)){
+                            Nodo nodo1 = new Nodo(5,(String)a+"-"+(String)b,false);
+                            nodo1.generarListaCaracteres((String)a, (String)b);
+                            Nodo nodo2 = manejadorNodos.generarPadre(nodo1, (Nodo)c,1,".",false); RESULT = (Nodo) nodo2;
+                            /*if(c == null){
+                                RESULT = (Nodo) nodo1;
+                            }else{
+                                RESULT = (Nodo) nodo2;
+                            }*/
+                        }else{
+
+                        }
+                    }else{
+                        
+                    }
+
+                :}
+		|CORCHETE_A LETRA:a GUION LETRA:b CORCHETE_C exp_regular:c {:
+                    if(manejadorNodos.verificarTamanio((String)a, (String)b)){
+                        if(manejadorNodos.isMenor((String)a, (String)b)){
+                            Nodo nodo1 = new Nodo(5,(String)a+"-"+(String)b,false);
+                            nodo1.generarListaCaracteres((String)a, (String)b);
+                            Nodo nodo2 = manejadorNodos.generarPadre(nodo1, (Nodo)c,1,".",false); RESULT = (Nodo) nodo2;
+                           /* if(c == null){
+                                RESULT = (Nodo) nodo1;
+                            }else{
+                                RESULT = (Nodo) nodo2;
+                            }*/
+                        }else{
+
+                        }
+                    }else{
+                        
+                    }
+
+                :}
 		|exp_regular:a INTERROGACION exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, new Nodo(8,"",true),4,"|",true); 
                                 Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo) b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b));
                                 RESULT = (Nodo) node2;
@@ -246,11 +287,11 @@ exp_regular ::=  PARENTESIS_A exp_regular:a PARENTESIS_C exp_regular:b {: Nodo n
                                 Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo) b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b));
                                 RESULT = (Nodo) node2;
                  :}
-		|exp_regular:a MAS exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, null,3,"+",true); 
+		|exp_regular:a MAS exp_regular:b {: Nodo node1 = new Nodo(3,"+",true); node1.setIzquierdaNodo((Nodo)b);
+                                //System.out.println("nodoa: "+(String)a+"     Nodob: "+(String)b);
                                 Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo) b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b));
                                 RESULT = (Nodo) node2;
                  :}
-		|exp_regular:a BETA exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,4,"|",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b)); RESULT = (Nodo) node1;:}
 		|exp_regular:a LINEA exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,4,"|",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b)); RESULT = (Nodo) node1;:}
 		|SALTO_RESERV:a exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1;:}
 		|TAB_RESERV:a  exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1;:}
@@ -267,7 +308,7 @@ exp_regular ::=  PARENTESIS_A exp_regular:a PARENTESIS_C exp_regular:b {: Nodo n
                     RESULT = (Nodo) node2;
                 :}
 		|PUNTO:a exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1; :}
-		| {: Nodo node = new Nodo(6,"#",false); RESULT = (Nodo) node; :};
+		| {: Nodo node = new Nodo(6,"#",false); RESULT = null; :};
 
 lo_que_sea_exp ::= CUALQUIER_SIM:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
                 |IDENTIFICADOR:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
@@ -305,7 +346,7 @@ lo_que_sea_exp ::= CUALQUIER_SIM:a lo_que_sea_exp:b {:RESULT = (String)a+(String
                 |SALTO_LINEA:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
                 |LLAVES_A:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
                 |LLAVES_C:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
-                |;
+                |{:RESULT = "";:};
 
 bloque_simbolos ::=  TERMINAL letras_min PUNTO_COMA saltos bloque_simbolos
                     | NO_TERMINAL letras_may PUNTO_COMA saltos bloque_simbolos

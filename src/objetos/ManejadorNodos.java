@@ -26,12 +26,17 @@ public class ManejadorNodos {
         Nodo padre = new Nodo(tipo, lexema, anulable);
         if(izquierdaNodo!=null){
             izquierdaNodo.setPadreNodo(padre);
+            System.out.println("NodoI: "+izquierdaNodo.getLexema());
         }
         if(derechaNodo!=null){
             derechaNodo.setPadreNodo(padre);
+            System.out.println("NodoD: "+derechaNodo.getLexema());
         }
         padre.setIzquierdaNodo(izquierdaNodo);
         padre.setDerechaNodo(derechaNodo);
+        
+        
+        
         return padre;
     }
     
@@ -53,5 +58,24 @@ public class ManejadorNodos {
             }
         }
         return padre;
+    }
+    
+    public boolean verificarTamanio(String a, String b){
+        if(a.length()==1 && b.length()==1){
+            return true;
+        }
+        return false;
+    }
+    
+    
+    public boolean isMenor(String a, String b){
+        char c1 = a.charAt(0);
+        char c2 = b.charAt(0);
+        int v1 = (int) c1;
+        int v2 = (int) c2;
+        if(v1<v2){
+            return true;
+        }
+        return false;
     }
 }
