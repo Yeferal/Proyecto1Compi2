@@ -1,0 +1,72 @@
+//codigo usuario
+package analisis.comprobaciones;
+import java_cup.runtime.Symbol;
+
+//Codigo para el parser, variables, metodos
+parser code
+{:
+    private int tipo;
+    
+
+    public void setTipo(int tipo){
+        this.tipo = tipo;
+    }
+
+    public int getTipo(){
+        return tipo;
+    }
+    
+    private Symbol s;
+    public void syntaxError(Symbol s){
+        this.s = s;
+    }
+    public Symbol getS(Symbol s){
+        return this.s = s;
+    }
+
+    public void setAccion(String tipo,String mensaje,String accion){
+            System.out.println(tipo+"         "+mensaje);
+        }
+
+    public void syntax_error(Symbol s){
+            
+            if(s!=null){
+                //Error e = new Error((String) s.value, "Sintactico", "Error Sintaxis token: " + s.right + " " + s.left + " " + s.value, s.right, s.left);
+            
+                //escribirErrores(e);
+                //setAccion("ERROR","Error Sintaxis token: " + (s.right+1) + " " + (s.left+1) + " " + s.value, "");
+            }
+    }
+
+:}
+
+//Coidgo para las acciones gramaticales
+
+action code
+{:
+    private int tipo;
+:}
+
+//Declaraciones 
+terminal ID_MIN, ID_MAY, ERR;
+
+
+// declaracion no terminales
+non terminal INICIO, ids_min, ids_may, er;
+
+
+start with INICIO;
+
+//Reglas Semanticas
+
+INICIO ::=   ids_min {:tipo = 1; parser.setTipo(tipo);:}
+            |ids_may {:tipo = 2; parser.setTipo(tipo);:}
+            |error:e {:parser.syntax_error((Symbol)e); tipo = 0; parser.setTipo(tipo);:} er;
+
+er ::=   ID_MIN
+        |ID_MAY 
+        |ERR;
+
+ids_min ::= ID_MIN ;
+
+ids_may ::= ID_MAY ;

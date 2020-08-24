@@ -39,6 +39,7 @@ action code
     ArrayList<Arbol> listaArboles = new ArrayList<>();
     ArrayList<ExpresionRegular> listaExpReg = new ArrayList<>();
     Arbol arbol;
+    String nombreToken;
     
 :}
 
@@ -56,13 +57,15 @@ non terminal INICIO, bloque_inf, datos_info, saltos, lo_que_sea_1, lo_que_sea_v 
 non terminal comentario_varias_lineas, num_version, bloque_code, lo_que_sea_bloque_code, bloque_exp_regular;
 non terminal estructura_exp_regular, exp_regular, bloque_simbolos, bloque_gramatica, letras_min, letras_may;
 non terminal estructura_gramatica, estructura_produccion, valor , estructura_semantica, reglas_semanticas, lo_quesea_semantica;
-non terminal saltos1, cadena_identificadores, salto_simple, lo_que_sea_exp, ids;
+non terminal saltos1, cadena_identificadores, salto_simple, lo_que_sea_exp, ids, exp_regular_contenido, exp_regular_despues, exp_regular_p;
 
 
 //presedencia de menor a mayor
-//precedence left IGUAL_IGUAL,MENOR_QUE,MAYOR_QUE,MAYOR_IGUAL,MENOR_IGUAL, DIFERENTE,PUNTO_PUNTO, CORCHETE_A, CORCHETE_C;
-precedence left CORCHETE_A, CORCHETE_C;
+//precedence left ASTERISCO, INTERROGACION, MAS;
+//precedence left PARENTESIS_A, PARENTESIS_C;
 precedence left ASTERISCO, INTERROGACION, MAS, PARENTESIS_A, PARENTESIS_C, LINEA;
+precedence left CORCHETE_A, CORCHETE_C;
+
 //precedence left BETA, LINEA;
 
 
@@ -235,80 +238,174 @@ lo_que_sea_bloque_code ::= CUALQUIER_SIM:a lo_que_sea_bloque_code:b {:RESULT = (
 
 bloque_exp_regular ::= estructura_exp_regular ;
 
-estructura_exp_regular ::=   IDENTIFICADOR:a IGUAL exp_regular:b PUNTO_COMA {: ExpresionRegular exp = new ExpresionRegular(new Arbol((Nodo)b),(String)a); listaExpReg.add(exp);:} salto_simple estructura_exp_regular
-                            |IGNORAR:a IGUAL exp_regular:b PUNTO_COMA {: ExpresionRegular exp = new ExpresionRegular(new Arbol((Nodo)b),(String)a); listaExpReg.add(exp);:} salto_simple estructura_exp_regular 
+estructura_exp_regular ::=   IDENTIFICADOR:a {:nombreToken = (String)a;:} IGUAL exp_regular:b PUNTO_COMA {: 
+                                Nodo node = new Nodo(6,"#",false, nombreToken);
+                                 Nodo raiz = manejadorNodos.generarPadre((Nodo)b, node,1,".",manejadorNodos.determinarAnulabilidad((Nodo)b, node), nombreToken);
+                               //ExpresionRegular exp = new ExpresionRegular(new Arbol(raiz),(String)a); listaExpReg.add(exp);
+                                ExpresionRegular exp = new ExpresionRegular(new Arbol((Nodo)b),(String)a); listaExpReg.add(exp);
+                            :} salto_simple estructura_exp_regular
+                            |IGNORAR:a IGUAL exp_regular:b PUNTO_COMA {: ExpresionRegular exp = new ExpresionRegular(new Arbol((Nodo)b),(String)a); /*listaExpReg.add(exp);*/:} salto_simple estructura_exp_regular 
                             | ;
 
-exp_regular ::=  PARENTESIS_A exp_regular:a PARENTESIS_C exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b)); RESULT = (Nodo) node1;:}
-		|CORCHETE_A exp_regular:a CORCHETE_C exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b)); RESULT = (Nodo) node1;:}
-		|CORCHETE_A NUMERO:a GUION NUMERO:b CORCHETE_C exp_regular:c {:
-                    if(manejadorNodos.verificarTamanio((String)a, (String)b)){
-                        if(manejadorNodos.isMenor((String)a, (String)b)){
-                            Nodo nodo1 = new Nodo(5,(String)a+"-"+(String)b,false);
-                            nodo1.generarListaCaracteres((String)a, (String)b);
-                            Nodo nodo2 = manejadorNodos.generarPadre(nodo1, (Nodo)c,1,".",false); RESULT = (Nodo) nodo2;
-                            /*if(c == null){
+
+exp_regular ::=  exp_regular_despues:a {: RESULT = (Nodo)a; :};
+                
+exp_regular_contenido ::=    exp_regular_despues:a {: RESULT = (Nodo)a; :}
+                            | {:RESULT = null;:};
+                
+exp_regular_p ::=    CORCHETE_A NUMERO:a GUION NUMERO:b CORCHETE_C {:
+                        if(manejadorNodos.verificarTamanio((String)a, (String)b)){
+                            if(manejadorNodos.isMenor((String)a, (String)b)){
+                                Nodo nodo1 = new Nodo(5,(String)a+"-"+(String)b,false, nombreToken);
+                                nodo1.generarListaCaracteres((String)a, (String)b);
+                                //Nodo nuevoNodo = manejadorNodos.generarPadreCadenas(nodo1,);
                                 RESULT = (Nodo) nodo1;
                             }else{
-                                RESULT = (Nodo) nodo2;
-                            }*/
+
+                            }
                         }else{
 
                         }
-                    }else{
-                        
-                    }
-
-                :}
-		|CORCHETE_A LETRA:a GUION LETRA:b CORCHETE_C exp_regular:c {:
-                    if(manejadorNodos.verificarTamanio((String)a, (String)b)){
-                        if(manejadorNodos.isMenor((String)a, (String)b)){
-                            Nodo nodo1 = new Nodo(5,(String)a+"-"+(String)b,false);
-                            nodo1.generarListaCaracteres((String)a, (String)b);
-                            Nodo nodo2 = manejadorNodos.generarPadre(nodo1, (Nodo)c,1,".",false); RESULT = (Nodo) nodo2;
-                           /* if(c == null){
+                        :}
+                    |CORCHETE_A LETRA:a GUION LETRA:b CORCHETE_C {:
+                        if(manejadorNodos.verificarTamanio((String)a, (String)b)){
+                            if(manejadorNodos.isMenor((String)a, (String)b)){
+                                Nodo nodo1 = new Nodo(5,(String)a+"-"+(String)b,false, nombreToken);
+                                nodo1.generarListaCaracteres((String)a, (String)b);
                                 RESULT = (Nodo) nodo1;
                             }else{
-                                RESULT = (Nodo) nodo2;
-                            }*/
+
+                            }
                         }else{
 
                         }
-                    }else{
-                        
-                    }
+                        :}
+                    |PARENTESIS_A exp_regular_despues:a PARENTESIS_C {: RESULT = (Nodo)a; :}
+                    |CORCHETE_A exp_regular_despues:a CORCHETE_C {: RESULT = (Nodo)a; :}
+                    |COMILLAS lo_que_sea_exp:a COMILLAS {: Nodo node1 = manejadorNodos.generarNodosTexto((String) a, nombreToken); RESULT = node1;:}
+                    |SALTO_RESERV:a {: Nodo node1 = new Nodo(5,(String) a,false, nombreToken); RESULT = node1; :}
+                    |TAB_RESERV:a {: Nodo node1 = new Nodo(5,(String) a,false, nombreToken); RESULT = node1; :}
+                    |PUNTO:a {: Nodo node1 = new Nodo(5,(String) a,false, nombreToken); RESULT = node1; :}
+                    |ESPACIO_BLANCO:a {: Nodo node1 = new Nodo(5,(String) a,false, nombreToken); RESULT = node1; :};
 
-                :}
-		|exp_regular:a INTERROGACION exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, new Nodo(8,"",true),4,"|",true); 
-                                Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo) b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b));
-                                RESULT = (Nodo) node2;
-                 :}
-		|exp_regular:a ASTERISCO exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, null,2,"*",true); 
-                                Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo) b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b));
-                                RESULT = (Nodo) node2;
-                 :}
-		|exp_regular:a MAS exp_regular:b {: Nodo node1 = new Nodo(3,"+",true); node1.setIzquierdaNodo((Nodo)b);
-                                //System.out.println("nodoa: "+(String)a+"     Nodob: "+(String)b);
-                                Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo) b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b));
-                                RESULT = (Nodo) node2;
-                 :}
-		|exp_regular:a LINEA exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,4,"|",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b)); RESULT = (Nodo) node1;:}
-		|SALTO_RESERV:a exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1;:}
-		|TAB_RESERV:a  exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1;:}
-		|ESPACIO_BLANCO:a exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1; :}
-		|COMILLAS lo_que_sea_exp:a COMILLAS exp_regular:b {:
-                    Nodo node1 = manejadorNodos.generarNodosTexto((String) a);
-                    Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b)); 
-                    RESULT = (Nodo) node2;
-                :}
-		|CUALQUIER_SIM:a exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1; :}
-		|ids:a exp_regular:b {:
-                    Nodo node1 = manejadorNodos.generarNodosTexto((String) a);
-                    Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b)); 
-                    RESULT = (Nodo) node2;
-                :}
-		|PUNTO:a exp_regular:b {: Nodo node1 = manejadorNodos.generarPadre(new Nodo(5,(String) a,false), (Nodo)b,1,".",false); RESULT = (Nodo) node1; :}
-		| {: Nodo node = new Nodo(6,"#",false); RESULT = null; :};
+exp_regular_despues ::=  CORCHETE_A NUMERO:a GUION NUMERO:b CORCHETE_C exp_regular_contenido:c {:
+                        if(manejadorNodos.verificarTamanio((String)a, (String)b)){
+                            if(manejadorNodos.isMenor((String)a, (String)b)){
+                                Nodo nodo1 = new Nodo(5,(String)a+"-"+(String)b,false, nombreToken);
+                                nodo1.generarListaCaracteres((String)a, (String)b);
+                                if(c == null){
+                                    RESULT = (Nodo) nodo1;
+                                }else{
+                                    Nodo nodo2 = manejadorNodos.generarPadre(nodo1, (Nodo)c,1,".",false, nombreToken); RESULT = (Nodo) nodo2;
+                                    RESULT = (Nodo) nodo2;
+                                }
+                            }else{
+
+                            }
+                        }else{
+
+                        }
+                        :}
+                            |CORCHETE_A LETRA:a GUION LETRA:b CORCHETE_C exp_regular_contenido:c {:
+                        if(manejadorNodos.verificarTamanio((String)a, (String)b)){
+                            if(manejadorNodos.isMenor((String)a, (String)b)){
+                                Nodo nodo1 = new Nodo(5,(String)a+"-"+(String)b,false, nombreToken);
+                                nodo1.generarListaCaracteres((String)a, (String)b);
+                                if(c == null){
+                                    RESULT = (Nodo) nodo1;
+                                }else{
+                                    Nodo nodo2 = manejadorNodos.generarPadre(nodo1, (Nodo)c,1,".",false, nombreToken); RESULT = (Nodo) nodo2;
+                                    RESULT = (Nodo) nodo2;
+                                }
+                            }else{
+
+                            }
+                        }else{
+
+                        }
+                        :}
+                        | PARENTESIS_A exp_regular_despues:a PARENTESIS_C exp_regular_contenido:b {: 
+                            if(b==null){
+                                RESULT = (Nodo)a;
+                            }else{
+                                Nodo nodo2 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b), nombreToken); RESULT = (Nodo) nodo2;
+                            }
+                        :}
+                        | CORCHETE_A exp_regular_despues:a CORCHETE_C exp_regular_contenido:b {: 
+                            if(b==null){
+                                RESULT = (Nodo)a;
+                            }else{
+                                Nodo nodo2 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b), nombreToken); RESULT = (Nodo) nodo2;
+                            }
+                        :}
+                        | COMILLAS lo_que_sea_exp:a COMILLAS exp_regular_contenido:b {:
+                            Nodo node1 = manejadorNodos.generarNodosTexto((String) a, nombreToken);
+                            if(b==null){
+                                RESULT = node1;
+                            }else{
+                                Nodo nodo2 = manejadorNodos.generarPadre(node1, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b), nombreToken); RESULT = (Nodo) nodo2;
+                            }
+                        :}
+                        | SALTO_RESERV:a exp_regular_contenido:b {: Nodo node1 = new Nodo(5,(String) a,false, nombreToken);
+                            if(b==null){
+                                RESULT = node1;
+                            }else{
+                                Nodo nodo2 = manejadorNodos.generarPadre(node1, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b), nombreToken); RESULT = (Nodo) nodo2;
+                            }
+                        :}
+                        | TAB_RESERV:a exp_regular_contenido:b {: Nodo node1 = new Nodo(5,(String) a,false, nombreToken);
+                            if(b==null){
+                                RESULT = node1;
+                            }else{
+                                Nodo nodo2 = manejadorNodos.generarPadre(node1, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b), nombreToken); RESULT = (Nodo) nodo2;
+                            }
+                        :}
+                        | ESPACIO_BLANCO:a exp_regular_contenido:b {: Nodo node1 = new Nodo(5,(String) a,false, nombreToken);
+                            if(b==null){
+                                RESULT = node1;
+                            }else{
+                                Nodo nodo2 = manejadorNodos.generarPadre(node1, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b), nombreToken); RESULT = (Nodo) nodo2;
+                            }
+                        :}
+                        | PUNTO:a exp_regular_contenido:b {: Nodo node1 = new Nodo(5,(String) a,false, nombreToken);
+                            if(b==null){
+                                RESULT = node1;
+                            }else{
+                                Nodo nodo2 = manejadorNodos.generarPadre(node1, (Nodo)b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b), nombreToken); RESULT = (Nodo) nodo2;
+                            }
+                        :}
+                        |exp_regular_p:a INTERROGACION exp_regular_contenido:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, new Nodo(8,"",true, nombreToken),4,"|",true, nombreToken); 
+                                if(b==null ){
+                                    RESULT = (Nodo) node1;
+                                }else{
+                                    Nodo node2 = manejadorNodos.generarPadre(node1, (Nodo) b,1,".",manejadorNodos.determinarAnulabilidad(node1, (Nodo)b), nombreToken);
+                                    RESULT = (Nodo) node2;
+                                }  
+                        :}
+                        |exp_regular_p:a ASTERISCO exp_regular_contenido:b {: Nodo nodeAs = new Nodo(2,"*",true, nombreToken);
+                                if(b==null ){
+                                    RESULT = (Nodo) nodeAs;
+                                }else{
+                                    Nodo node2 = manejadorNodos.generarPadre(nodeAs, (Nodo) b,1,".",manejadorNodos.determinarAnulabilidad(nodeAs, (Nodo)b), nombreToken);
+                                    RESULT = (Nodo) node2;
+                                }  
+                        :}
+                        |exp_regular_p:a MAS exp_regular_contenido:b {: /*Nodo nodeMas = new Nodo(3,"+",true, nombreToken); nodeMas.setIzquierdaNodo((Nodo)a);*/
+                                Nodo node = (Nodo)a ;
+                                Nodo nuevo = new Nodo (node.getTipo(),node.getLexema(),node.isAnulable(), nombreToken);
+                                nuevo.listaCaracteres = node.listaCaracteres;
+                                Nodo nodeAs = new Nodo(2,"*",true, nombreToken); nodeAs.setIzquierdaNodo(node);
+                                Nodo nodoConcat = manejadorNodos.generarPadre(nuevo,nodeAs ,1,".",manejadorNodos.determinarAnulabilidad(nuevo, nodeAs), nombreToken);
+                                if(b==null ){
+                                    RESULT = (Nodo) nodoConcat;
+                                }else{
+                                    Nodo node2 = manejadorNodos.generarPadre(nodoConcat, (Nodo) b,1,".",manejadorNodos.determinarAnulabilidad(nodoConcat, (Nodo)b), nombreToken);
+                                    RESULT = (Nodo) node2;
+                                }            
+                        :}
+                        |exp_regular_despues:a LINEA exp_regular_despues:b {: Nodo node1 = manejadorNodos.generarPadre((Nodo)a, (Nodo)b,4,"|",manejadorNodos.determinarAnulabilidad((Nodo)a, (Nodo)b), nombreToken); RESULT = (Nodo) node1;:}
+                        ;
+
 
 lo_que_sea_exp ::= CUALQUIER_SIM:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
                 |IDENTIFICADOR:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}

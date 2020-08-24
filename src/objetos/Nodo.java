@@ -17,19 +17,28 @@ public class Nodo {
     */
     
     private int tipo, id;
-    private String lexema;
+    private String lexema, nombreToken;
     private ArrayList<Integer> primeros = new ArrayList<>();
     private ArrayList<Integer> siguientes = new ArrayList<>();
-    private ArrayList<String> listaCaracteres = new ArrayList<>();
+    public ArrayList<String> listaCaracteres = new ArrayList<>();
     private boolean anulable;
     private Nodo derechaNodo, izquierdaNodo, padreNodo;
 
-    public Nodo(int tipo, String lexema, boolean anulable) {
+//    public Nodo(int tipo, String lexema, boolean anulable) {
+//        this.tipo = tipo;
+//        this.lexema = lexema;
+//        this.anulable = anulable;
+//        listaCaracteres.add(lexema);
+//    }
+
+    public Nodo(int tipo, String lexema, boolean anulable, String nombreToken) {
         this.tipo = tipo;
         this.lexema = lexema;
+        this.nombreToken = nombreToken;
         this.anulable = anulable;
         listaCaracteres.add(lexema);
     }
+    
     
     public void generarListaCaracteres(String a, String b){
         listaCaracteres.clear();
@@ -43,6 +52,11 @@ public class Nodo {
             listaCaracteres.add(Character.toString(c));
         }
         
+    }
+    
+    public void desplegar(){
+        System.out.println("P: "+primeros);
+        System.out.println("s: "+siguientes);
     }
 
     public int getId() {
@@ -68,6 +82,23 @@ public class Nodo {
     public void setLexema(String lexema) {
         this.lexema = lexema;
     }
+
+    public String getNombreToken() {
+        return nombreToken;
+    }
+
+    public void setNombreToken(String nombreToken) {
+        this.nombreToken = nombreToken;
+    }
+
+    public ArrayList<String> getListaCaracteres() {
+        return listaCaracteres;
+    }
+
+    public void setListaCaracteres(ArrayList<String> listaCaracteres) {
+        this.listaCaracteres = listaCaracteres;
+    }
+    
 
     public ArrayList<Integer> getPrimeros() {
         return primeros;
