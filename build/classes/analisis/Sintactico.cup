@@ -3,12 +3,17 @@ package analisis;
 import java_cup.runtime.Symbol;
 import objetos.*;
 import java.util.ArrayList;
-
+import analisis.comprobaciones.*;
+import lalr.*;
+import java.io.StringReader;
 
 //Codigo para el parser, variables, metodos
 parser code
 {:
     public ArrayList<ExpresionRegular> listaExpReg = new ArrayList<>();
+    public TablaTerminalesNoT tablaTerminalesNoT;
+    public TablaProducciones tablaProducciones;
+    
     private Symbol s;
     public void syntaxError(Symbol s){
         this.s = s;
@@ -40,6 +45,12 @@ action code
     ArrayList<ExpresionRegular> listaExpReg = new ArrayList<>();
     Arbol arbol;
     String nombreToken;
+    boolean corretaProduccion;
+    TablaTerminalesNoT tablaTerminalesNoT = new TablaTerminalesNoT();
+    AnalizadorLexicoC analizadorLexicoC;
+    AnalizadorSintacticoC analizadorSintacticoC;
+    Produccion produccion;
+    TablaProducciones tablaProducciones;
     
 :}
 
@@ -57,7 +68,7 @@ non terminal INICIO, bloque_inf, datos_info, saltos, lo_que_sea_1, lo_que_sea_v 
 non terminal comentario_varias_lineas, num_version, bloque_code, lo_que_sea_bloque_code, bloque_exp_regular;
 non terminal estructura_exp_regular, exp_regular, bloque_simbolos, bloque_gramatica, letras_min, letras_may;
 non terminal estructura_gramatica, estructura_produccion, valor , estructura_semantica, reglas_semanticas, lo_quesea_semantica;
-non terminal saltos1, cadena_identificadores, salto_simple, lo_que_sea_exp, ids, exp_regular_contenido, exp_regular_despues, exp_regular_p;
+non terminal saltos1, cadena_identificadores, salto_simple, lo_que_sea_exp, ids, exp_regular_contenido, exp_regular_despues, exp_regular_p, s1;
 
 
 //presedencia de menor a mayor
@@ -77,9 +88,9 @@ start with INICIO;
 
 INICIO ::=   saltos bloque_inf 
              SEPARACION bloque_code  
-             SEPARACION saltos bloque_exp_regular 
-             SEPARACION saltos bloque_simbolos 
-             SEPARACION saltos bloque_gramatica {:parser.listaExpReg = listaExpReg; :}
+             SEPARACION saltos bloque_exp_regular {:parser.listaExpReg = listaExpReg; :}
+             SEPARACION saltos bloque_simbolos {:parser.tablaTerminalesNoT = tablaTerminalesNoT; tablaProducciones = new TablaProducciones();:}
+             SEPARACION saltos bloque_gramatica {:parser.tablaProducciones = tablaProducciones; :}
             |IDENTIFICADOR IDENTIFICADOR ;
 
 saltos1 ::= SALTO_LINEA saltos1
@@ -449,30 +460,178 @@ bloque_simbolos ::=  TERMINAL letras_min PUNTO_COMA saltos bloque_simbolos
                     | NO_TERMINAL letras_may PUNTO_COMA saltos bloque_simbolos
                     | ;
 
-letras_min ::=   IDENTIFICADOR COMA letras_min
-		|LETRA COMA letras_min
-		|LETRA
-		|IDENTIFICADOR;
+letras_min ::=   IDENTIFICADOR:a COMA letras_min:b {: analizadorLexicoC = new AnalizadorLexicoC(new StringReader((String)a));
+                    analizadorSintacticoC = new AnalizadorSintacticoC(analizadorLexicoC);
+                    analizadorSintacticoC.parse();
+                    switch(analizadorSintacticoC.getTipo()){
+                        case 1:
+                            System.out.println("Es un terminal: "+(String) a);
+                            if(!tablaTerminalesNoT.isExistTerminal((String) a)){
+                                
+                            }
+                            break;
+                        case 0:
+                        case 2:
+                            System.out.println("Error no es terminal: "+(String) a);
+                            break;
+                    }
+                :}
+		|LETRA:a COMA letras_min:b {: analizadorLexicoC = new AnalizadorLexicoC(new StringReader((String)a));
+                    analizadorSintacticoC = new AnalizadorSintacticoC(analizadorLexicoC);
+                    analizadorSintacticoC.parse();
+                    switch(analizadorSintacticoC.getTipo()){
+                        case 1:
+                            System.out.println("Es un terminal: "+(String) a);
+                            if(!tablaTerminalesNoT.isExistTerminal((String) a)){
+                                
+                            }
+                            break;
+                        case 0:
+                        case 2:
+                            System.out.println("Error no es terminal: "+(String) a);
+                            break;
+                    }
+                :}
+		|LETRA:a {: analizadorLexicoC = new AnalizadorLexicoC(new StringReader((String)a));
+                    analizadorSintacticoC = new AnalizadorSintacticoC(analizadorLexicoC);
+                    analizadorSintacticoC.parse();
+                    switch(analizadorSintacticoC.getTipo()){
+                        case 1:
+                            System.out.println("Es un terminal: "+(String) a);
+                            if(!tablaTerminalesNoT.isExistTerminal((String) a)){
+                                
+                            }
+                            break;
+                        case 0:
+                        case 2:
+                            System.out.println("Error no es terminal: "+(String) a);
+                            break;
+                    }
+                :}
+		|IDENTIFICADOR:a {: analizadorLexicoC = new AnalizadorLexicoC(new StringReader((String)a));
+                    analizadorSintacticoC = new AnalizadorSintacticoC(analizadorLexicoC);
+                    analizadorSintacticoC.parse();
+                    switch(analizadorSintacticoC.getTipo()){
+                        case 1:
+                            System.out.println("Es un terminal: "+(String) a);
+                            if(!tablaTerminalesNoT.isExistTerminal((String) a)){
+                                
+                            }
+                            break;
+                        case 0:
+                        case 2:
+                            System.out.println("Error no es terminal: "+(String) a);
+                            break;
+                    }
+                :} ;
 
-letras_may ::=   IDENTIFICADOR COMA letras_may
-                |LETRA COMA letras_may
-		|LETRA
-		|IDENTIFICADOR;
+letras_may ::=   IDENTIFICADOR:a COMA letras_may:b {: analizadorLexicoC = new AnalizadorLexicoC(new StringReader((String)a));
+                    analizadorSintacticoC = new AnalizadorSintacticoC(analizadorLexicoC);
+                    analizadorSintacticoC.parse();
+                    switch(analizadorSintacticoC.getTipo()){
+                        case 2:
+                            System.out.println("Es un no terminal: "+(String) a);
+                            if(!tablaTerminalesNoT.isExistNoTerminal((String) a)){
+                                
+                            }
+                            break;
+                        case 0:
+                        case 1:
+                            System.out.println("Error no es terminal: "+(String) a);
+                            break;
+                    }
+                :}
+                |LETRA:a COMA letras_may:b {: analizadorLexicoC = new AnalizadorLexicoC(new StringReader((String)a));
+                    analizadorSintacticoC = new AnalizadorSintacticoC(analizadorLexicoC);
+                    analizadorSintacticoC.parse();
+                    switch(analizadorSintacticoC.getTipo()){
+                        case 2:
+                            System.out.println("Es un no terminal: "+(String) a);
+                            if(!tablaTerminalesNoT.isExistNoTerminal((String) a)){
+                                
+                            }
+                            break;
+                        case 0:
+                        case 1:
+                            System.out.println("Error no es terminal: "+(String) a);
+                            break;
+                    }
+                :}
+		|LETRA:a {: analizadorLexicoC = new AnalizadorLexicoC(new StringReader((String)a));
+                    analizadorSintacticoC = new AnalizadorSintacticoC(analizadorLexicoC);
+                    analizadorSintacticoC.parse();
+                    switch(analizadorSintacticoC.getTipo()){
+                        case 2:
+                            System.out.println("Es un no terminal: "+(String) a);
+                            if(!tablaTerminalesNoT.isExistNoTerminal((String) a)){
+                                
+                            }
+                            break;
+                        case 0:
+                        case 1:
+                            System.out.println("Error no es terminal: "+(String) a);
+                            break;
+                    }
+                :}
+		|IDENTIFICADOR:a {: analizadorLexicoC = new AnalizadorLexicoC(new StringReader((String)a));
+                    analizadorSintacticoC = new AnalizadorSintacticoC(analizadorLexicoC);
+                    analizadorSintacticoC.parse();
+                    switch(analizadorSintacticoC.getTipo()){
+                        case 2:
+                            System.out.println("Es un no terminal: "+(String) a);
+                            if(!tablaTerminalesNoT.isExistNoTerminal((String) a)){
+                                
+                            }
+                            break;
+                        case 0:
+                        case 1:
+                            System.out.println("Error no es terminal: "+(String) a);
+                            break;
+                    }
+                :};
 
 
 bloque_gramatica ::= estructura_gramatica;
 
-estructura_gramatica ::= ids DOBLE_PUNTO estructura_produccion estructura_semantica PUNTO_COMA saltos1 estructura_gramatica
-                        |ids DOBLE_PUNTO estructura_produccion estructura_semantica PUNTO_COMA;
+s1 ::=   estructura_gramatica
+        |;
 
-estructura_produccion ::= ids valor estructura_produccion
-                        | ids valor;
+estructura_gramatica ::= ids:a  {:corretaProduccion = true; produccion = new Produccion((String)a);:} DOBLE_PUNTO estructura_produccion estructura_semantica PUNTO_COMA {:
+                            if(tablaTerminalesNoT.buscarNoTerminal((String)a)){
+                                if(corretaProduccion){
+                                    tablaProducciones.agregarProduccion(produccion);
+                                }
+                            }else{
+                               System.out.println("ERROR: "+(String)a);
+                            }
+                            
+                        :} saltos1 s1 ;
 
-ids ::= IDENTIFICADOR
-        |LETRA;
+estructura_produccion ::= ids:a valor {:
+                            if(tablaTerminalesNoT.buscarExpresion((String)a)){
+                                produccion.agregarNuevaExpresion(new Expresion((String)a, tablaTerminalesNoT.getBandera()));
+                                
+                            }else{
+                               System.out.println("ERROR: "+(String)a);
+                               corretaProduccion = false;
+                            }
+                            
+                        :} estructura_produccion
+                        | ids:a valor {:
+                            if(tablaTerminalesNoT.buscarExpresion((String)a)){
+                                produccion.agregarNuevaExpresion(new Expresion((String)a, tablaTerminalesNoT.getBandera()));
+                            }else{
+                               //error
+                               corretaProduccion = false;
+                            }
+                            
+                        :};
+
+ids ::= IDENTIFICADOR:a {:RESULT = (String) a;:}
+        |LETRA:a {:RESULT = (String) a;:};
 
 valor ::=    DOS_PUNTOS ids
-            |;
+            | {:RESULT = null;:};
 
 estructura_semantica ::= LLAVES_A reglas_semanticas LLAVES_C;
 

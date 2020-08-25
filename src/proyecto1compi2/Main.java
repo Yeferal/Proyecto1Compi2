@@ -9,6 +9,8 @@ import automata.GeneradorEstadoAutamata;
 import automata.ManejadorLexico;
 import java.io.IOException;
 import java.io.StringReader;
+import lalr.TablaProducciones;
+import lalr.TablaTerminalesNoT;
 import objetos.Arbol;
 import objetos.ManejadorNodos;
 import objetos.Nodo;
@@ -48,7 +50,7 @@ public class Main {
         "terminal por, div;\n" +
         "terminal mas, menos;\n" +
         "terminal entero;\n" +
-        "no terminal A, B;\n" +
+        "no terminal E, B;\n" +
         "no terminal S;\n" +
         "%%\n" +
         "S :: E:val {printf(\"Resultado = %d\",val);};\n" +
@@ -60,74 +62,47 @@ public class Main {
         AnalizadorLexico lexico =  new AnalizadorLexico(new StringReader(texto1));
         AnalizadorSintactico sintactico = new AnalizadorSintactico(lexico);
         sintactico.parse();
-        Arbol arFinal = new Arbol(null);
-        Nodo nodo = null;
-        ManejadorNodos m = new ManejadorNodos();
-        GeneradorEstadoAutamata ge = new GeneradorEstadoAutamata();
-        for (int i = 0; i < sintactico.listaExpReg.size(); i++) {
-            if(i==0){
-                nodo = sintactico.listaExpReg.get(i).getArbol().getRaiz();
-            }else{
-                nodo = m.generarPadre(nodo, sintactico.listaExpReg.get(i).getArbol().getRaiz(), 4, "|", m.determinarAnulabilidad(nodo,sintactico.listaExpReg.get(i).getArbol().getRaiz()), "");
-            }
-            System.out.println("Tp: "+nodo.getIzquierdaNodo().getNombreToken());
-        }
-        Nodo node = new Nodo(6,"#",false, "");
-        Nodo raiz = m.generarPadre(nodo, node,1,".",false, "");
-        arFinal = new Arbol(raiz);
+        TablaTerminalesNoT tablaTerminalesNoT = sintactico.tablaTerminalesNoT;
+        tablaTerminalesNoT.desplegarTerminales();
+        tablaTerminalesNoT.desplegarNoTerminales();
         
-        arFinal.iniciarRecorridoPrimeroUltimos();
-        arFinal.tablaS.listarCaracteres();
-        arFinal.tablaS.deplegarCaracteres();
-//        arFinal.tablaS.generarTablaEstados(arFinal);
-        ge.generarEstados(arFinal);
+        TablaProducciones tablaProducciones = sintactico.tablaProducciones;
+        tablaProducciones.desplegarProducciones();
         
-        String textoF = "ho*la fda 2443 3443.434 + - +";
-        String [] arre = textoF.split("");
-        System.out.println(arre[4]);
-        ManejadorLexico manejadorLexico = new ManejadorLexico();
-        manejadorLexico.iniciarRecorrido(ge.listaFilasAutomatas, textoF);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+//        Arbol arFinal = new Arbol(null);
+//        Nodo nodo = null;
+//        ManejadorNodos m = new ManejadorNodos();
 //        GeneradorEstadoAutamata ge = new GeneradorEstadoAutamata();
-//        System.out.println("Arboles: "+sintactico.listaExpReg.size());
 //        for (int i = 0; i < sintactico.listaExpReg.size(); i++) {
-//            System.out.println("Nombre exp: "+sintactico.listaExpReg.get(i).getNombre());
-//            sintactico.listaExpReg.get(i).getArbol().iniciarRecorridoPrimeroUltimos();
-//            sintactico.listaExpReg.get(i).getArbol().tablaS.listarCaracteres();
-//            sintactico.listaExpReg.get(i).getArbol().tablaS.deplegarCaracteres();
-//            sintactico.listaExpReg.get(i).getArbol().tablaS.generarTablaEstados(sintactico.listaExpReg.get(i).getArbol());
-//            ge.generarEstados(sintactico.listaExpReg.get(i).getArbol());
+//            if(i==0){
+//                nodo = sintactico.listaExpReg.get(i).getArbol().getRaiz();
+//            }else{
+//                nodo = m.generarPadre(nodo, sintactico.listaExpReg.get(i).getArbol().getRaiz(), 4, "|", m.determinarAnulabilidad(nodo,sintactico.listaExpReg.get(i).getArbol().getRaiz()), "");
+//            }
+//            System.out.println("Tp: "+nodo.getIzquierdaNodo().getNombreToken());
 //        }
+//        Nodo node = new Nodo(6,"#",false, "");
+//        Nodo raiz = m.generarPadre(nodo, node,1,".",false, "");
+//        arFinal = new Arbol(raiz);
 //        
+//        arFinal.iniciarRecorridoPrimeroUltimos();
+//        arFinal.tablaS.listarCaracteres();
+//        arFinal.tablaS.deplegarCaracteres();
+////        arFinal.tablaS.generarTablaEstados(arFinal);
+//        ge.generarEstados(arFinal);
 //        
-//        
-//        int l = 4;
+//        String textoF = "ho*la fda 2443 3443.434 + - +";
+//        String [] arre = textoF.split("");
+//        System.out.println(arre[4]);
+//        ManejadorLexico manejadorLexico = new ManejadorLexico();
+//        manejadorLexico.iniciarRecorrido(ge.listaFilasAutomatas, textoF);
         
-//        int c = (int)'ñ';
-//        System.out.println("ascii: "+c);
-//        AnalizadorLexicoC analizadorLexicoC = new AnalizadorLexicoC(new StringReader("DSFDF"));
-//        AnalizadorSintacticoC analizadorSintacticoC = new AnalizadorSintacticoC(analizadorLexicoC);
-//        analizadorSintacticoC.parse();
-//        switch(analizadorSintacticoC.getTipo()){
-//            case 1:
-//                System.out.println("MINUSCULAS");
-//                break;
-//            case 2:
-//                System.out.println("MAYUSCULAS");
-//                break;
-//            case 0:
-//                System.out.println("error");
-//                break;
-//        }
+        
+        
+        
+        
+        
+        
         
         
     }
