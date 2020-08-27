@@ -9,6 +9,7 @@ import automata.GeneradorEstadoAutamata;
 import automata.ManejadorLexico;
 import java.io.IOException;
 import java.io.StringReader;
+import lalr.GeneradorEstadosLALR;
 import lalr.TablaProducciones;
 import lalr.TablaTerminalesNoT;
 import objetos.Arbol;
@@ -44,21 +45,37 @@ public class Main {
         "entero = [0-9]+;\n" +
         "real = [0-9]+((.)[0-9]+)?;\n" +
         "mas = \"+\";\n" +
+        "por = \"*\";\n" +
+        "xd = \"x\";\n" +
         "menos = \"-\";\n" +
+        "igual = \"=\";\n" +
         "& = [\\n\\t]; /* Significa que cuando se encuentre este token deberá ser ignorado */\n" +
         "%% //Seccion de simbolos terminales y no terminales\n" +
-        "terminal por, div;\n" +
-        "terminal mas, menos;\n" +
+        //"terminal por, div;\n" +
+        "terminal mas, menos, por,xd, igual;\n" +
         "terminal entero;\n" +
-        "no terminal E, B;\n" +
+        "no terminal E, V;\n" +
         "no terminal S;\n" +
         "%%\n" +
+                
+        "S :: V igual E:val {printf(\"Resultado = %d\",val);};\n" +
         "S :: E:val {printf(\"Resultado = %d\",val);};\n" +
-        "E :: E:val menos E:val2 {RESULT=val - val2;};\n" +
-        "E :: E:val mas E:val2 {RESULT=val + val2;};\n" +
-        "E :: E:val por E:val2 {RESULT=val * val2;};\n" +
-        "E :: E:val div E:val2 {RESULT=val / val2;};\n" +
-        "E :: entero:val {RESULT=val;};";
+        "E :: V {printf(\"Resultado = %d\",val);};\n" +
+        "V :: xd:val {printf(\"Resultado = %d\",val);};\n" +
+                
+        //"S :: E:val {printf(\"Resultado = %d\",val);};\n" +
+                
+        //"S :: B:val {printf(\"Resultado = %d\",val);};\n" +
+        //"B :: B mas:val {printf(\"Resultado = %d\",val);};\n" +
+                
+        //"E :: E:val menos E:val2 {RESULT=val - val2;};\n" +
+        //"E :: E:val mas E:val2 {RESULT=val + val2;};\n" +
+                
+        //"E :: E:val por E:val2 {RESULT=val * val2;};\n" +
+        //"E :: E:val div E:val2 {RESULT=val / val2;};\n" +
+                
+        //"E :: entero:val {RESULT=val;};";
+        "V :: por E:val {RESULT=val;};";
         AnalizadorLexico lexico =  new AnalizadorLexico(new StringReader(texto1));
         AnalizadorSintactico sintactico = new AnalizadorSintactico(lexico);
         sintactico.parse();
@@ -67,7 +84,17 @@ public class Main {
         tablaTerminalesNoT.desplegarNoTerminales();
         
         TablaProducciones tablaProducciones = sintactico.tablaProducciones;
+        tablaProducciones.generarEstadoInicial();
         tablaProducciones.desplegarProducciones();
+        System.out.println("");
+        
+        GeneradorEstadosLALR generadorEstadosLALR = new GeneradorEstadosLALR();
+        generadorEstadosLALR.inciarEstado(tablaProducciones.listaProducciones, tablaTerminalesNoT);
+        System.out.println("===========================Estados===========================");
+        generadorEstadosLALR.pintarEstados();
+        //generadorEstadosLALR.pintarProducciones();
+        //tablaProducciones.desplegarProducciones();
+        
         
 //        Arbol arFinal = new Arbol(null);
 //        Nodo nodo = null;

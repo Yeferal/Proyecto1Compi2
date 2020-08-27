@@ -3,6 +3,11 @@ package lalr;
 
 public class Expresion {
     
+    /**TIPO
+     * 0. reservada
+     * 1. terminal
+     * 2. no terminal
+     */
     String nombre;
     int tipo;
 
