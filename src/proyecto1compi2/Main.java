@@ -12,6 +12,7 @@ import java.io.StringReader;
 import lalr.GeneradorEstadosLALR;
 import lalr.TablaProducciones;
 import lalr.TablaTerminalesNoT;
+import lalr.TablaTransiciones;
 import objetos.Arbol;
 import objetos.ManejadorNodos;
 import objetos.Nodo;
@@ -92,6 +93,9 @@ public class Main {
         generadorEstadosLALR.inciarEstado(tablaProducciones.listaProducciones, tablaTerminalesNoT);
         System.out.println("===========================Estados===========================");
         generadorEstadosLALR.pintarEstados();
+        
+        TablaTransiciones tablaTransiciones = new TablaTransiciones();
+        tablaTransiciones.generarTabla(generadorEstadosLALR.listaEstadoLR, tablaTerminalesNoT);
         //generadorEstadosLALR.pintarProducciones();
         //tablaProducciones.desplegarProducciones();
         

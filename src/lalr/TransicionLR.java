@@ -5,7 +5,8 @@ public class TransicionLR {
     /*Tipos de Transicion
     1. Terminal   SHIFT
     2. No terminal GOTO
-    
+    3. terminaProduccion REDUCE
+    0. aceptacion 0
     */
     
     private String tokenTransicion;
@@ -46,8 +47,10 @@ public class TransicionLR {
                 return "s"+numIrA;
             case 2:
                 return "g"+numIrA;
+            case 3:
+                return "r"+numIrA;
                 default:
-                    return numIrA+"";
+                    return "a";
                 
         }
     }

@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class GeneradorEstadosLALR {
     
-    ArrayList<EstadoLR> listaEstadoLR = new ArrayList<>();
+    public ArrayList<EstadoLR> listaEstadoLR = new ArrayList<>();
     ArrayList<Produccion> listaProducciones;
     EstadoLR estadoAux, estadoAux2;
     ArrayList<String> auxSimbolos = new ArrayList<>();
@@ -229,6 +229,20 @@ public class GeneradorEstadosLALR {
             }
         }else{
                 produccion.transiciono = true;
+                if(produccion.isUltimo() && produccion.getListaExpresiones().get(produccion.getPivote()).getTipo()==0){
+                    TransicionLR transicionLR = new TransicionLR("a", 0);
+                    transicionLR.setTipo(0);
+                    estadoActual.getListaTransicionesLR().add(transicionLR);
+                    
+                }else if(produccion.pivote==produccion.getListaExpresiones().size()){
+                    System.out.println("AGREGO EL DE ACEPPPPPPPPPPPPPPPPPPPPPPPPPPPPTTTTTTTTTTTTTTTTTTTTTTTTAAAAAAAAAAAAAAAAAAAACCCCCCCCCCCCCIIIIIIIIIIIOOOOOOOOOONNNNNNNNNN");
+
+                    for (int i = 0; i < produccion.getSimboloesPreAnalisis().size(); i++) {
+                        TransicionLR transicionLR = new TransicionLR(produccion.getSimboloesPreAnalisis().get(i), buscarProducionTransicion(produccion));
+                        transicionLR.setTipo(3);
+                        estadoActual.getListaTransicionesLR().add(transicionLR);
+                    }
+                }
             }
     }
     
@@ -365,5 +379,16 @@ public class GeneradorEstadosLALR {
         }
     }
     
-    
+    public int buscarProducionTransicion(Produccion produccion){
+        
+        for (int i = 0; i < listaProducciones.size(); i++) {
+            boolean isNombre = listaProducciones.get(i).nombreNoTerminal.equals(produccion.getNombreNoTerminal());
+            boolean isExpresiones = listaProducciones.get(i).getListaExpresiones().equals(produccion.getListaExpresiones());
+            if(isNombre && isExpresiones){
+                return i;
+            }
+        }
+        
+        return 0;
+    }
 }
