@@ -14,17 +14,21 @@ import java.util.ArrayList;
 public class TablaTransiciones {
     
     private ArrayList<TransicionesEstado> tablaTransiciones = new ArrayList<>();
+    private GenerarTablaLALR  generarTablaLALR = new GenerarTablaLALR();
     TablaTerminalesNoT tablaTerminalesNoT;
     ArrayList<EstadoLR> listaEstadoLR;
     int tamanio;
+    boolean isCorrectoLR1 = true;
     
     public void generarTabla(ArrayList<EstadoLR> listaEstadoLR, TablaTerminalesNoT tablaTerminalesNoT){
         this.listaEstadoLR = listaEstadoLR;
         this.tablaTerminalesNoT = tablaTerminalesNoT;
+        isCorrectoLR1 = true;
         tamanio = tablaTerminalesNoT.getTerminales().size()+tablaTerminalesNoT.getNoTerminales().size()+1;
         buscarTransicionesAtEstado();
         desplegarFilaTerminalesNT();
         desplegarFila();
+        generarTablaLALR.iniciarRecorrido(tablaTransiciones, listaEstadoLR);
     }
     
     public void buscarTransicionesAtEstado(){
@@ -37,8 +41,17 @@ public class TablaTransiciones {
     
     private void buscarTransiciones(EstadoLR actual, TransicionesEstado nuevaFila){
         for (int i = 0; i < actual.getListaTransicionesLR().size(); i++) {
-            nuevaFila.listaTransiciones.get(buscarPosicion(actual.getListaTransicionesLR().get(i)));
-            nuevaFila.listaTransiciones.set(buscarPosicion(actual.getListaTransicionesLR().get(i)), actual.getListaTransicionesLR().get(i));
+            int posicion = buscarPosicion(actual.getListaTransicionesLR().get(i));
+            
+            if(nuevaFila.listaTransiciones.get(posicion)!=null){
+                isCorrectoLR1 = false;
+                TransicionLR aux = nuevaFila.listaTransiciones.get(posicion);
+                aux.setTokenTransicion(aux.getTokenTransicion()+"/"+actual.getListaTransicionesLR().get(i).getTokenTransicion());
+                nuevaFila.listaTransiciones.set(posicion, aux);
+            }else{
+                nuevaFila.listaTransiciones.set(posicion, actual.getListaTransicionesLR().get(i));
+            }
+            
         }
     }
     

@@ -7,6 +7,7 @@ public class EstadoLR {
     
     ArrayList<TransicionLR> listaTransicionesLR = new ArrayList<>();
     ArrayList<Produccion> listaProducciones = new ArrayList<>();
+    public boolean isUsed = false;
 
     public ArrayList<TransicionLR> getListaTransicionesLR() {
         return listaTransicionesLR;
