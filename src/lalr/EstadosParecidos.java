@@ -14,10 +14,12 @@ import java.util.ArrayList;
 public class EstadosParecidos {
     
     ArrayList<Integer> estadoParecidos;
-    
+    boolean verificado;
+    int id;
     
     public EstadosParecidos() {
         estadoParecidos = new ArrayList<>();
+        verificado = false;
     }
     
     public void agregarNuevo(int numero){
@@ -31,9 +33,36 @@ public class EstadosParecidos {
     public void setEstadoParecidos(ArrayList<Integer> estadoParecidos) {
         this.estadoParecidos = estadoParecidos;
     }
+
+    public boolean isVerificado() {
+        return verificado;
+    }
+
+    public void setVerificado(boolean verificado) {
+        this.verificado = verificado;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    public String toString(){
+        String texto = "";
+        texto = estadoParecidos.get(0)+"";
+        for (int i = 1; i < estadoParecidos.size(); i++) {
+            texto += "y"+estadoParecidos.get(i);
+        }
+        return texto;
+    }
+    
+    
     
     public void desplegarLista(){
-        System.out.print("Estados: "+estadoParecidos.get(0));
+        System.out.print(id+". "+estadoParecidos.get(0));
         for (int i = 1; i < estadoParecidos.size(); i++) {
             System.out.print("y"+estadoParecidos.get(i));
         }

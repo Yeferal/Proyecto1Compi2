@@ -53,20 +53,21 @@ public class Main {
         "& = [\\n\\t]; /* Significa que cuando se encuentre este token deberá ser ignorado */\n" +
         "%% //Seccion de simbolos terminales y no terminales\n" +
         //"terminal por, div;\n" +
-//        "terminal mas, menos, por,xd, igual;\n" +
+        //"terminal mas, menos, por,xd, igual;\n" +
+        "terminal por,xd, igual;\n" +
 //        "terminal entero;\n" +
-//        "no terminal E, V;\n" +
+        "no terminal S, E, V;\n" +
 //        "no terminal S;\n" +
-        "terminal mas, id, por,pa, pc;\n" +
-        "terminal entero;\n" +
-        "no terminal E, T;\n" +
-        "no terminal F;\n" +
+        //"terminal   pc, pa, entero, id, por, mas;\n" +
+ //       "terminal entero;\n" +
+        //"no terminal  F, T, E;\n" +
+//        "no terminal F;\n" +
         "%%\n" +
                 
-//        "S :: V igual E:val {printf(\"Resultado = %d\",val);};\n" +
-//        "S :: E:val {printf(\"Resultado = %d\",val);};\n" +
-//        "E :: V {printf(\"Resultado = %d\",val);};\n" +
-//        "V :: xd:val {printf(\"Resultado = %d\",val);};\n" +
+        "S :: V igual E:val {printf(\"Resultado = %d\",val);};\n" +
+        "S :: E:val {printf(\"Resultado = %d\",val);};\n" +
+        "E :: V {printf(\"Resultado = %d\",val);};\n" +
+        "V :: xd:val {printf(\"Resultado = %d\",val);};\n" +
                 
         //"S :: E:val {printf(\"Resultado = %d\",val);};\n" +   
         //"S :: B:val {printf(\"Resultado = %d\",val);};\n" +
@@ -85,16 +86,16 @@ public class Main {
 //        "E :: E mas T:val {printf(\"Resultado = %d\",val);};\n" +  
 //        "E :: T:val {RESULT=val;};";
                 
-        "E :: E mas T:val {printf(\"Resultado = %d\",val);};\n" + 
-        "E :: T:val {printf(\"Resultado = %d\",val);};\n" +        
-        "T :: F:val por T:val2 {RESULT=val - val2;};\n" +
-        "T :: F {printf(\"Resultado = %d\",val);};\n" + 
-        "F :: id:val {RESULT=val * val2;};\n" +    
-        "F :: entero:val {RESULT=val + val2;};\n" +
-        "F :: pa:val E pc {RESULT=val;};";
+//        "E :: E mas T:val {printf(\"Resultado = %d\",val);};\n" + 
+//        "E :: T:val {printf(\"Resultado = %d\",val);};\n" +        
+//        "T :: F:val por T:val2 {RESULT=val - val2;};\n" +
+//        "T :: F {printf(\"Resultado = %d\",val);};\n" + 
+//        "F :: id:val {RESULT=val * val2;};\n" +    
+//        "F :: entero:val {RESULT=val + val2;};\n" +
+//        "F :: pa:val E pc {RESULT=val;};";
         
         //"E :: entero:val {RESULT=val;};";
-        //"V :: por E:val {RESULT=val;};";
+        "V :: por E:val {RESULT=val;};";
         AnalizadorLexico lexico =  new AnalizadorLexico(new StringReader(texto1));
         AnalizadorSintactico sintactico = new AnalizadorSintactico(lexico);
         sintactico.parse();

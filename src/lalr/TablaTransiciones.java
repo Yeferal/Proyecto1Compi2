@@ -29,6 +29,8 @@ public class TablaTransiciones {
         desplegarFilaTerminalesNT();
         desplegarFila();
         generarTablaLALR.iniciarRecorrido(tablaTransiciones, listaEstadoLR);
+        desplegarFilaTerminalesNT();
+        generarTablaLALR.despleagarNuevaTabla();
     }
     
     public void buscarTransicionesAtEstado(){
@@ -84,7 +86,7 @@ public class TablaTransiciones {
     
     public void desplegarFilaTerminalesNT(){
         System.out.println("");
-        System.out.print("\t\t");
+        System.out.print("\t\t\t");
         for (int i = 0; i < tablaTerminalesNoT.getTerminales().size(); i++) {
             System.out.print(tablaTerminalesNoT.getTerminales().get(i)+"\t");
         }

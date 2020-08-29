@@ -16,10 +16,13 @@ public class TransicionesEstado {
     public ArrayList<TransicionLR> listaTransiciones = new ArrayList<>();
     int numero;
     String nombreEstado;
-
+    boolean verificado;
+    int tamanio;
     public TransicionesEstado(int numero, String nombreEstado, int tamanio) {
         this.numero = numero;
         this.nombreEstado = nombreEstado;
+        verificado = false;
+        this.tamanio = tamanio;
         generarEstadoTotales(tamanio);
     }
     
@@ -52,9 +55,19 @@ public class TransicionesEstado {
             listaTransiciones.add(null);
         }
     }
+
+    public int getTamanio() {
+        return tamanio;
+    }
+
+    public void setTamanio(int tamanio) {
+        this.tamanio = tamanio;
+    }
+    
+    
     
     public void despleagar(){
-        System.out.print(numero+".  "+nombreEstado+"\t\t");
+        System.out.print(numero+".  \t"+nombreEstado+"\t\t");
         for (int i = 0; i < listaTransiciones.size(); i++) {
             if(listaTransiciones.get(i)==null){
                 System.out.print("--"+"\t");
