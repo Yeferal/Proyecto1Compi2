@@ -9,10 +9,12 @@ import automata.GeneradorEstadoAutamata;
 import automata.ManejadorLexico;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.LinkedList;
 import lalr.GeneradorEstadosLALR;
 import lalr.TablaProducciones;
 import lalr.TablaTerminalesNoT;
 import lalr.TablaTransiciones;
+import lalr.lectura.TablaPila;
 import objetos.Arbol;
 import objetos.ManejadorNodos;
 import objetos.Nodo;
@@ -117,6 +119,24 @@ public class Main {
         tablaTransiciones.generarTabla(generadorEstadosLALR.listaEstadoLR, tablaTerminalesNoT);
         //generadorEstadosLALR.pintarProducciones();
         //tablaProducciones.desplegarProducciones();
+        
+        LinkedList<String> cola = new LinkedList<>();
+        cola.offer("xd");
+        cola.offer("igual");
+        cola.offer("xd");
+        cola.offer("$");
+        TablaPila tablaPila = new TablaPila();
+        tablaPila.iniciarPila(tablaProducciones.listaProducciones, tablaTransiciones.tablaTransiciones, tablaTerminalesNoT, cola);
+//        tablaPila.probar();
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
 //        Arbol arFinal = new Arbol(null);

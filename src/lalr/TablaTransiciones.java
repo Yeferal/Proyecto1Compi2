@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class TablaTransiciones {
     
-    private ArrayList<TransicionesEstado> tablaTransiciones = new ArrayList<>();
+    public ArrayList<TransicionesEstado> tablaTransiciones = new ArrayList<>();
     private GenerarTablaLALR  generarTablaLALR = new GenerarTablaLALR();
     TablaTerminalesNoT tablaTerminalesNoT;
     ArrayList<EstadoLR> listaEstadoLR;
@@ -28,9 +28,9 @@ public class TablaTransiciones {
         buscarTransicionesAtEstado();
         desplegarFilaTerminalesNT();
         desplegarFila();
-        generarTablaLALR.iniciarRecorrido(tablaTransiciones, listaEstadoLR);
-        desplegarFilaTerminalesNT();
-        generarTablaLALR.despleagarNuevaTabla();
+        //generarTablaLALR.iniciarRecorrido(tablaTransiciones, listaEstadoLR);
+        //desplegarFilaTerminalesNT();
+        //generarTablaLALR.despleagarNuevaTabla();
     }
     
     public void buscarTransicionesAtEstado(){

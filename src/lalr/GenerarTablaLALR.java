@@ -36,7 +36,13 @@ public class GenerarTablaLALR {
         generarConfirmacionParecidos();
         desplegarParecidosConfirmados();
         
+        
         this.tablaTransiciones = copiarTabla(tablaTransiciones);
+        
+        listaParecido = listaParecidoConfirmados;
+        cambiaParecidos();
+        
+        
         
         iniciarUnion();
 //        desplegarParecidosConfirmados();

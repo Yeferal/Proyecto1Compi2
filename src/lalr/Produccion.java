@@ -126,4 +126,12 @@ public class Produccion {
         Collections.sort(simboloesPreAnalisis);
     }
     
+    public String desplegarProduccion(){
+        String t = getNombreNoTerminal()+" -> ";
+        for (int i = 0; i < listaExpresiones.size(); i++) {
+            t += listaExpresiones.get(i).getNombre()+" ";
+        }
+        return t;
+    }
+    
 }

@@ -18,6 +18,7 @@ public class TransicionesEstado {
     String nombreEstado;
     boolean verificado;
     int tamanio;
+    
     public TransicionesEstado(int numero, String nombreEstado, int tamanio) {
         this.numero = numero;
         this.nombreEstado = nombreEstado;
