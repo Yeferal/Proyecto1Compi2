@@ -1,9 +1,10 @@
 
 package objetos;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Siguiente {
+public class Siguiente implements Serializable{
     
     private Nodo nodoFinal;
     public String nombreToken;

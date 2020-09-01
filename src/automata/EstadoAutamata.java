@@ -5,13 +5,14 @@
  */
 package automata;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author LENOVO-PC
  */
-public class EstadoAutamata {
+public class EstadoAutamata implements Serializable{
     
     public String nombre, nombreToken;
     boolean isAceptacion;

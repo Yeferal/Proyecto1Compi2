@@ -1,11 +1,12 @@
 
 package lalr;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class Produccion {
+public class Produccion implements Serializable{
     
     String nombreNoTerminal;
     int id, pivote;

@@ -1,12 +1,15 @@
 
 package lalr;
 
-public class Expresion {
+import java.io.Serializable;
+
+public class Expresion implements Serializable{
     
     /**TIPO
      * 0. reservada
      * 1. terminal
      * 2. no terminal
+     * 3. λ
      */
     String nombre;
     int tipo;

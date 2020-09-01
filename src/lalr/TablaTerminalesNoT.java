@@ -1,9 +1,10 @@
 
 package lalr;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TablaTerminalesNoT {
+public class TablaTerminalesNoT implements Serializable{
     
     
     ArrayList<String> terminales = new ArrayList<>();

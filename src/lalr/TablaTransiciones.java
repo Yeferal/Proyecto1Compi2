@@ -5,13 +5,14 @@
  */
 package lalr;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author LENOVO-PC
  */
-public class TablaTransiciones {
+public class TablaTransiciones implements Serializable{
     
     public ArrayList<TransicionesEstado> tablaTransiciones = new ArrayList<>();
     private GenerarTablaLALR  generarTablaLALR = new GenerarTablaLALR();

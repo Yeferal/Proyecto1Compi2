@@ -1,7 +1,9 @@
 
 package lalr;
 
-public class TransicionLR {
+import java.io.Serializable;
+
+public class TransicionLR implements Serializable{
     /*Tipos de Transicion
     1. Terminal   SHIFT
     2. No terminal GOTO

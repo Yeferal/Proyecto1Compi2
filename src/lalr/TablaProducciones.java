@@ -1,9 +1,10 @@
 
 package lalr;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TablaProducciones {
+public class TablaProducciones implements Serializable{
     
     public ArrayList<Produccion> listaProducciones = new ArrayList<>();
     

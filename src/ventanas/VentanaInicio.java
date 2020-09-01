@@ -1,10 +1,16 @@
 
 package ventanas;
 
+import analisis.AnalizadorLexico;
+import analisis.AnalizadorSintactico;
 import archivos.Archivo;
+import archivos.GeneradorLenguaje;
 import java.awt.Font;
 import java.io.File;
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -23,13 +29,18 @@ public class VentanaInicio extends javax.swing.JFrame {
     private Archivo archivo = new Archivo();
     public ArrayList<ArchivoExtension> listaArchivos = new ArrayList<>();
     private ArrayList<Lenguaje> listaLenguajes = new ArrayList<>();
+    private GeneradorLenguaje generadorLenguaje = new GeneradorLenguaje();
+    final File carpeta = new File("Lenguajes");
     
     public VentanaInicio() {
         initComponents();
         this.setLocationRelativeTo(null);
-        listaLenguajes.add(new Lenguaje("Java"));
-        listaLenguajes.add(new Lenguaje("C++"));
-        listaLenguajes.add(new Lenguaje("Python"));
+        menuVer.setEnabled(false);
+        botonErrores.setEnabled(false);
+        archivo.listarFicherosPorCarpeta(carpeta);
+//        listaLenguajes.add(new Lenguaje("Java"));
+//        listaLenguajes.add(new Lenguaje("C++"));
+//        listaLenguajes.add(new Lenguaje("Python"));
     }
     
     private void crearArchivo(String nombre){
@@ -161,6 +172,7 @@ public class VentanaInicio extends javax.swing.JFrame {
         panel = new javax.swing.JPanel();
         labelFilCol = new javax.swing.JLabel();
         tabbedPanel = new javax.swing.JTabbedPane();
+        botonErrores = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         menuArchivo = new javax.swing.JMenu();
         menuItemNuevo = new javax.swing.JMenuItem();
@@ -174,6 +186,8 @@ public class VentanaInicio extends javax.swing.JFrame {
         menuItemCargarLenguaje = new javax.swing.JMenuItem();
         menuItemBorrarLenguaje = new javax.swing.JMenuItem();
         menuVer = new javax.swing.JMenu();
+        menuItemTabla = new javax.swing.JMenuItem();
+        menuItemPila = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -186,6 +200,8 @@ public class VentanaInicio extends javax.swing.JFrame {
             }
         });
 
+        botonErrores.setText("Errores");
+
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
         panel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
@@ -193,20 +209,24 @@ public class VentanaInicio extends javax.swing.JFrame {
             .addGroup(panelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
-                        .addGap(0, 891, Short.MAX_VALUE)
-                        .addComponent(labelFilCol, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(tabbedPanel))
+                    .addComponent(tabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1042, Short.MAX_VALUE)
+                    .addGroup(panelLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(botonErrores)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(labelFilCol, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
                 .addGap(32, 32, 32)
-                .addComponent(tabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
+                .addComponent(tabbedPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 505, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(labelFilCol, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(labelFilCol, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(botonErrores))
+                .addGap(9, 9, 9))
         );
 
         getContentPane().add(panel, java.awt.BorderLayout.CENTER);
@@ -269,6 +289,11 @@ public class VentanaInicio extends javax.swing.JFrame {
         menuEjecutar.add(menuItemCompilar);
 
         menuItemCargarLenguaje.setText("Cargar Lenguaje");
+        menuItemCargarLenguaje.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemCargarLenguajeActionPerformed(evt);
+            }
+        });
         menuEjecutar.add(menuItemCargarLenguaje);
 
         menuItemBorrarLenguaje.setText("Borrar Lenguaje");
@@ -277,6 +302,18 @@ public class VentanaInicio extends javax.swing.JFrame {
         menuBar.add(menuEjecutar);
 
         menuVer.setText("Ver");
+
+        menuItemTabla.setText("Tabla LALR");
+        menuVer.add(menuItemTabla);
+
+        menuItemPila.setText("Pila");
+        menuItemPila.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemPilaActionPerformed(evt);
+            }
+        });
+        menuVer.add(menuItemPila);
+
         menuBar.add(menuVer);
 
         setJMenuBar(menuBar);
@@ -346,9 +383,50 @@ public class VentanaInicio extends javax.swing.JFrame {
     private void menuItemSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSalirActionPerformed
         System.exit(0);
     }//GEN-LAST:event_menuItemSalirActionPerformed
+
+    private void menuItemPilaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemPilaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuItemPilaActionPerformed
+
+    private void menuItemCargarLenguajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCargarLenguajeActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.showOpenDialog(this);
+        File file = fileChooser.getSelectedFile();
+        if(file!=null){
+            try {
+                String ruta = file.getPath();
+                AnalizadorLexico lexico = new AnalizadorLexico(new StringReader(archivo.leerArchivo(ruta)));
+                AnalizadorSintactico sintactico = new AnalizadorSintactico(lexico);
+                sintactico.parse();
+                if(sintactico.erroresSintacticos.size()>0 || sintactico.erroresSemanticos.size()>0){
+                    JOptionPane.showMessageDialog(null, "El archivo del lenguaje contiene errores");
+                    System.out.println("\nSINTACITCOS");
+                    for (int i = 0; i < sintactico.erroresSintacticos.size(); i++) {
+                        System.out.println(sintactico.erroresSintacticos.get(i).toString());
+                    }
+                    System.out.println("\nSEMANTICOS");
+                    for (int i = 0; i < sintactico.erroresSemanticos.size(); i++) {
+                        System.out.println(sintactico.erroresSemanticos.get(i).toString());
+                    }
+                    botonErrores.setEnabled(true);
+                }else{
+                    JOptionPane.showMessageDialog(null, "El archivo fue leido correctamente");
+                    botonErrores.setEnabled(true);
+                    generadorLenguaje.generar(sintactico);
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(VentanaInicio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+        
+        
+    }//GEN-LAST:event_menuItemCargarLenguajeActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botonErrores;
     private javax.swing.JLabel labelFilCol;
     private javax.swing.JMenu menuArchivo;
     private javax.swing.JMenuBar menuBar;
@@ -360,7 +438,9 @@ public class VentanaInicio extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuItemGuardar;
     private javax.swing.JMenuItem menuItemGuardarComo;
     private javax.swing.JMenuItem menuItemNuevo;
+    private javax.swing.JMenuItem menuItemPila;
     private javax.swing.JMenuItem menuItemSalir;
+    private javax.swing.JMenuItem menuItemTabla;
     private javax.swing.JMenu menuLenguaje;
     private javax.swing.JMenu menuVer;
     private javax.swing.JPanel panel;

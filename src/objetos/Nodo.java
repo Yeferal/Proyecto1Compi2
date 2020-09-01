@@ -1,9 +1,10 @@
 
 package objetos;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Nodo {
+public class Nodo implements Serializable{
     
     /*TIPOS
     1. concatenacion    (.)

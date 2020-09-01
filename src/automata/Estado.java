@@ -5,11 +5,13 @@
  */
 package automata;
 
+import java.io.Serializable;
+
 /**
  *
  * @author LENOVO-PC
  */
-public class Estado {
+public class Estado implements Serializable{
     
     private String caracter, token;
     private int estadoSiguiente;

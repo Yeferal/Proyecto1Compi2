@@ -46,28 +46,27 @@ public class GeneradorEstadosLALR {
         for (int i = 1; i < estadoAux.listaProducciones.size(); i++) {
             estadoAux.listaProducciones.get(i).id = i;
             if(estadoAux.listaProducciones.get(i).listaExpresiones.get(0).getTipo()!=1){
-                if(estadoAux.listaProducciones.get(i).isLimit()){
-                    auxSimbolos.clear();
-                    analizarEstadoAnalisis(estadoAux.listaProducciones.get(i).listaExpresiones.get(0).nombre); // Agraga todas la producciones que pertenescan la expresion analisada
-                    generarSimbolosPreAnalisis(estadoAux.listaProducciones.get(i).listaExpresiones.get(1));  //agrega los simbolos de pre analisis a . x B   ====B primeros
-                    System.out.print(estadoAux.listaProducciones.get(i).getNombreNoTerminal());
-                    System.out.print(estadoAux.listaProducciones.get(i).getSimboloesPreAnalisis());
-                    System.out.println(auxSimbolos);
-                    agregarSimbolosPreAnalisisEstados(estadoAux.listaProducciones.get(i).listaExpresiones.get(0).nombre); // agrega los simbolos de preAnalisis a todas las producciones encontradas.
+                if(estadoAux.listaProducciones.get(i).listaExpresiones.get(0).getTipo()==3){
+                    estadoAux.listaProducciones.get(i).transiciono = true;
+                    TransicionLR transicionLR = new TransicionLR(estadoAux.listaProducciones.get(i).getListaExpresiones().get(estadoAux.listaProducciones.get(i).pivote).getNombre(), 1);
+                    transicionLR.setTipo(estadoAux.listaProducciones.get(i).getListaExpresiones().get(estadoAux.listaProducciones.get(i).pivote).getTipo());
+                    estadoAux.listaTransicionesLR.add(transicionLR);
                 }else{
-                    auxSimbolos.clear();
-                    copiarSimbolos(estadoAux.listaProducciones.get(i).simboloesPreAnalisis);
-                    System.out.print(estadoAux.listaProducciones.get(i).getNombreNoTerminal());
-                    System.out.print(estadoAux.listaProducciones.get(i).getSimboloesPreAnalisis());
-                    System.out.println(auxSimbolos);
-                    analizarEstadoAnalisis(estadoAux.listaProducciones.get(i).listaExpresiones.get(0).nombre); // Agraga todas la producciones que pertenescan la expresion analisada
-                    agregarSimbolosPreAnalisisEstados(estadoAux.listaProducciones.get(i).listaExpresiones.get(0).nombre); // agrega los simbolos de preAnalisis a todas las producciones encontradas.
-                    
+                    if(estadoAux.listaProducciones.get(i).isLimit()){
+                        auxSimbolos.clear();
+                        analizarEstadoAnalisis(estadoAux.listaProducciones.get(i).listaExpresiones.get(0).nombre); // Agraga todas la producciones que pertenescan la expresion analisada
+                        generarSimbolosPreAnalisis(estadoAux.listaProducciones.get(i).listaExpresiones.get(1));  //agrega los simbolos de pre analisis a . x B   ====B primeros
+
+                        agregarSimbolosPreAnalisisEstados(estadoAux.listaProducciones.get(i).listaExpresiones.get(0).nombre); // agrega los simbolos de preAnalisis a todas las producciones encontradas.
+                    }else{
+                        auxSimbolos.clear();
+                        copiarSimbolos(estadoAux.listaProducciones.get(i).simboloesPreAnalisis);
+                        analizarEstadoAnalisis(estadoAux.listaProducciones.get(i).listaExpresiones.get(0).nombre); // Agraga todas la producciones que pertenescan la expresion analisada
+                        agregarSimbolosPreAnalisisEstados(estadoAux.listaProducciones.get(i).listaExpresiones.get(0).nombre); // agrega los simbolos de preAnalisis a todas las producciones encontradas.
+
+                    }
                 }
-            }else{
-                System.out.print(estadoAux.listaProducciones.get(i).getNombreNoTerminal());
-                    System.out.print(estadoAux.listaProducciones.get(i).getSimboloesPreAnalisis());
-                    System.out.println(auxSimbolos);
+                
             }
         }
         listaEstadoLR.add(estadoAux);
@@ -278,19 +277,27 @@ public class GeneradorEstadosLALR {
             if(estadoAux2.listaProducciones.get(i).isUltimaExpresion()){
                 
                 if(estadoAux2.listaProducciones.get(i).listaExpresiones.get(estadoAux2.listaProducciones.get(i).pivote).getTipo()!=1){
-                    if(estadoAux2.listaProducciones.get(i).isLimit()){
-                        //System.out.println("Entro 2");
-                        auxSimbolos.clear();
-                        analizarEstadoAnalisis2(estadoAux2.listaProducciones.get(i).listaExpresiones.get(estadoAux2.listaProducciones.get(i).pivote).nombre); // Agraga todas la producciones que pertenescan la expresion analisada
-                        generarSimbolosPreAnalisis(estadoAux2.listaProducciones.get(i).listaExpresiones.get(estadoAux2.listaProducciones.get(i).pivote+1));  //agrega los simbolos de pre analisis a . x B   ====B primeros
-                        agregarSimbolosPreAnalisisEstadosNuevos(estadoAux2.listaProducciones.get(i).listaExpresiones.get(estadoAux2.listaProducciones.get(i).pivote).nombre); // agrega los simbolos de preAnalisis a todas las producciones encontradas.
+                    if(estadoAux2.listaProducciones.get(i).listaExpresiones.get(estadoAux2.listaProducciones.get(i).pivote).getTipo()==3){
+                        estadoAux2.listaProducciones.get(i).transiciono = true;
+                        TransicionLR transicionLR = new TransicionLR(estadoAux2.listaProducciones.get(i).getListaExpresiones().get(estadoAux2.listaProducciones.get(i).pivote).getNombre(), posicionEstado);
+                        transicionLR.setTipo(estadoAux2.listaProducciones.get(i).getListaExpresiones().get(estadoAux2.listaProducciones.get(i).pivote).getTipo());
+                        estadoAux2.listaTransicionesLR.add(transicionLR);
                     }else{
-                        //System.out.println("Entro 3");
-                        auxSimbolos.clear();
-                        copiarSimbolos(estadoAux2.listaProducciones.get(i).simboloesPreAnalisis);
-                        analizarEstadoAnalisis2(estadoAux2.listaProducciones.get(i).listaExpresiones.get(estadoAux2.listaProducciones.get(i).pivote).nombre); // Agraga todas la producciones que pertenescan la expresion analisada
-                        agregarSimbolosPreAnalisisEstadosNuevos(estadoAux2.listaProducciones.get(i).listaExpresiones.get(estadoAux2.listaProducciones.get(i).pivote).nombre); // agrega los simbolos de preAnalisis a todas las producciones encontradas.
+                        if(estadoAux2.listaProducciones.get(i).isLimit()){
+                            //System.out.println("Entro 2");
+                            auxSimbolos.clear();
+                            analizarEstadoAnalisis2(estadoAux2.listaProducciones.get(i).listaExpresiones.get(estadoAux2.listaProducciones.get(i).pivote).nombre); // Agraga todas la producciones que pertenescan la expresion analisada
+                            generarSimbolosPreAnalisis(estadoAux2.listaProducciones.get(i).listaExpresiones.get(estadoAux2.listaProducciones.get(i).pivote+1));  //agrega los simbolos de pre analisis a . x B   ====B primeros
+                            agregarSimbolosPreAnalisisEstadosNuevos(estadoAux2.listaProducciones.get(i).listaExpresiones.get(estadoAux2.listaProducciones.get(i).pivote).nombre); // agrega los simbolos de preAnalisis a todas las producciones encontradas.
+                        }else{
+                            //System.out.println("Entro 3");
+                            auxSimbolos.clear();
+                            copiarSimbolos(estadoAux2.listaProducciones.get(i).simboloesPreAnalisis);
+                            analizarEstadoAnalisis2(estadoAux2.listaProducciones.get(i).listaExpresiones.get(estadoAux2.listaProducciones.get(i).pivote).nombre); // Agraga todas la producciones que pertenescan la expresion analisada
+                            agregarSimbolosPreAnalisisEstadosNuevos(estadoAux2.listaProducciones.get(i).listaExpresiones.get(estadoAux2.listaProducciones.get(i).pivote).nombre); // agrega los simbolos de preAnalisis a todas las producciones encontradas.
+                        }
                     }
+                    
                 }
                 
             }

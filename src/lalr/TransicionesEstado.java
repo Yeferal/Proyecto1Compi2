@@ -5,13 +5,14 @@
  */
 package lalr;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author LENOVO-PC
  */
-public class TransicionesEstado {
+public class TransicionesEstado implements Serializable{
     
     public ArrayList<TransicionLR> listaTransiciones = new ArrayList<>();
     int numero;

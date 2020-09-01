@@ -1,9 +1,10 @@
 
 package lalr;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class EstadoLR {
+public class EstadoLR implements Serializable{
     
     ArrayList<TransicionLR> listaTransicionesLR = new ArrayList<>();
     ArrayList<Produccion> listaProducciones = new ArrayList<>();

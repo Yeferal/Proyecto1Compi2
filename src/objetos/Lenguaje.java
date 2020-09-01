@@ -1,14 +1,20 @@
 
 package objetos;
 
+import java.io.Serializable;
 
-public class Lenguaje {
+
+public class Lenguaje implements Serializable{
     
     private String nombre, version, autor, lanzamiento, extension;
 
     public Lenguaje(String nombre) {
         this.nombre = nombre;
     }
+
+    public Lenguaje() {
+    }
+
 
     public String getNombre() {
         return nombre;
@@ -50,6 +56,15 @@ public class Lenguaje {
         this.extension = extension;
     }
     
+    
+    public String toString(){
+        String texto = "Nombre: "+getNombre()+"\n";
+        texto += "Version: "+getVersion()+"\n";
+        texto += "Autor: "+getAutor()+"\n";
+        texto += "Lanzamiento: "+getLanzamiento()+"\n";
+        texto += "Extension: "+getExtension();
+        return texto;
+    }
     
     
 }

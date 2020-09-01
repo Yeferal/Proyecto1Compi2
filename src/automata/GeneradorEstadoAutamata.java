@@ -1,13 +1,14 @@
 
 package automata;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import objetos.Arbol;
 import objetos.Siguiente;
 
-public class GeneradorEstadoAutamata {
+public class GeneradorEstadoAutamata implements Serializable{
     
     public ArrayList<String> listaCaracteres = new ArrayList<>();
     public ArrayList<EstadoAutamata> listaFilasAutomatas = new ArrayList<>();
@@ -57,7 +58,7 @@ public class GeneradorEstadoAutamata {
             System.out.print(listaFilasAutomatas.get(i).nombreToken+"\t"+listaFilasAutomatas.get(i).isAceptacion+" > "+listaFilasAutomatas.get(i).nombre+"\t");
             for (int j = 0; j < listaFilasAutomatas.get(i).listaEstados.size(); j++) {
                 //System.out.print(listaFilasAutomatas.get(i).listaEstados.get(j).getCaracter()+",");
-                System.out.print(listaFilasAutomatas.get(i).listaEstados.get(j).getEstadoSiguiente()+",\t");
+                System.out.print(listaFilasAutomatas.get(i).listaEstados.get(j).getEstadoSiguiente()+","+listaFilasAutomatas.get(i).listaEstados.get(j).getToken()+"\t");
             }
             System.out.println("\n");
         }

@@ -5,13 +5,14 @@
  */
 package lalr;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author LENOVO-PC
  */
-public class EstadosParecidos {
+public class EstadosParecidos implements Serializable{
     
     ArrayList<Integer> estadoParecidos;
     boolean verificado;
