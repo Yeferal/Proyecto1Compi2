@@ -29,7 +29,7 @@ public class TablaTransiciones implements Serializable{
         buscarTransicionesAtEstado();
         desplegarFilaTerminalesNT();
         desplegarFila();
-        //generarTablaLALR.iniciarRecorrido(tablaTransiciones, listaEstadoLR);
+        generarTablaLALR.iniciarRecorrido(tablaTransiciones, listaEstadoLR);
         //desplegarFilaTerminalesNT();
         //generarTablaLALR.despleagarNuevaTabla();
     }

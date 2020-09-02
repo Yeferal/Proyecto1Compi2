@@ -51,6 +51,7 @@ public class VentanaGuardar extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Se Guardaron los cambio Correctamente");
             ventanaInicio.setVisible(true);
             this.setVisible(false);
+            ventanaInicio.cambiarNombreTabbed(nombre);
         }
     }
     

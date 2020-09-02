@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import objetos.ArchivoLenguaje;
@@ -16,13 +17,14 @@ import objetos.Lenguaje;
 
 public class Archivo {
     
-    
+    public ArrayList<ArchivoLenguaje> listaLenguajes = new ArrayList<>();
     
     public String leerArchivo(String ruta){
         String texto = "";
         File archivo = null;
         FileReader fr = null;
         BufferedReader br = null;
+        
 
       try {
          archivo = new File (ruta);
@@ -88,12 +90,13 @@ public class Archivo {
     }
     
     public void listarFicherosPorCarpeta(final File carpeta) {
+        listaLenguajes.clear();
         for (final File ficheroEntrada : carpeta.listFiles()) {
             if (ficheroEntrada.isDirectory()) {
                 listarFicherosPorCarpeta(ficheroEntrada);
             } else {
                 try {
-                    System.out.println(ficheroEntrada.getPath());
+                    //System.out.println(ficheroEntrada.getPath());
                     leerObjeto("Lenguajes/"+ficheroEntrada.getName());
                 } catch (IOException ex) {
                     Logger.getLogger(Archivo.class.getName()).log(Level.SEVERE, null, ex);
@@ -113,7 +116,7 @@ public class Archivo {
             leyendoFichero.close();
             
             System.out.println("Nombre Lenguaje: "+archivoLenguaje.getLenguaje().getNombre());
-            
+            listaLenguajes.add(archivoLenguaje);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Archivo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -121,6 +124,3 @@ public class Archivo {
     }
         
 }
-
-
-//listarFicherosPorCarpeta(carpeta );

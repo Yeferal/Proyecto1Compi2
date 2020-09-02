@@ -46,6 +46,7 @@ public class GenerarTablaLALR implements Serializable{
         
         
         iniciarUnion();
+        tablaTransiciones = tablaTransicionesNueva;
 //        desplegarParecidosConfirmados();
         //tablaTransicionesNueva = copiarTabla(this.tablaTransiciones);
         //despleagarNuevaTabla();

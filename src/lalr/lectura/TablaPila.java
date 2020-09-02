@@ -29,6 +29,16 @@ public class TablaPila {
     private ArrayList<Accion> listaAcciones;
     private boolean completo = true;
     private boolean aceptado = false;
+
+    public ArrayList<Accion> getListaAcciones() {
+        return listaAcciones;
+    }
+
+    public void setListaAcciones(ArrayList<Accion> listaAcciones) {
+        this.listaAcciones = listaAcciones;
+    }
+    
+    
     
     public void iniciarPila(ArrayList<Produccion> listaProducciones, ArrayList<TransicionesEstado> tablaTransiciones, TablaTerminalesNoT tablaTerminalesNoT,LinkedList<String> cola){
         this.listaProducciones = listaProducciones;

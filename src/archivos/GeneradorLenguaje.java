@@ -62,9 +62,9 @@ public class GeneradorLenguaje {
         //================================
         
         
-        String textoF = "x = x";
-        ManejadorLexico manejadorLexico = new ManejadorLexico();
-        manejadorLexico.iniciar(ge.listaFilasAutomatas, textoF, listaIgnorados);
+        //String textoF = "x = x";
+        //ManejadorLexico manejadorLexico = new ManejadorLexico();
+        //manejadorLexico.iniciar(ge.listaFilasAutomatas, textoF, listaIgnorados);
 
         
         
@@ -101,13 +101,13 @@ public class GeneradorLenguaje {
         //generadorEstadosLALR.pintarProducciones();
         //tablaProducciones.desplegarProducciones();
         
-        LinkedList<String> cola = manejadorLexico.cola;
+       // LinkedList<String> cola = manejadorLexico.cola;
 //        cola.offer("xd");
 //        cola.offer("igual");
 //        cola.offer("xd");
 //        cola.offer("$");
-        TablaPila tablaPila = new TablaPila();
-        tablaPila.iniciarPila(tablaProducciones.listaProducciones, tablaTransiciones.tablaTransiciones, tablaTerminalesNoT, cola);
+        //TablaPila tablaPila = new TablaPila();
+        //tablaPila.iniciarPila(tablaProducciones.listaProducciones, tablaTransiciones.tablaTransiciones, tablaTerminalesNoT, cola);
         
         ArchivoLenguaje archivoLenguaje = new ArchivoLenguaje(lenguaje, ge, listaIgnorados, tablaTerminalesNoT, tablaProducciones, tablaTransiciones);
         
