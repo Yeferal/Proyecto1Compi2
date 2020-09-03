@@ -72,7 +72,7 @@ public class VentanaInicio extends javax.swing.JFrame {
             listaLenguajes.add(archivo.listaLenguajes.get(i).getLenguaje());
             String nombre = archivo.listaLenguajes.get(i).getLenguaje().getNombre();
             AccionItemMenu accionItemMenu = new AccionItemMenu(this, i, labelLenguaje, nombre);
-            JMenuItem item = new JMenuItem(nombre);
+            JMenuItem item = new JMenuItem(nombre+"\t(."+archivo.listaLenguajes.get(i).getLenguaje().getExtension()+")");
             item.setName(nombre);
             item.addActionListener(accionItemMenu);
             menuLenguaje.add(item);
@@ -462,42 +462,73 @@ public class VentanaInicio extends javax.swing.JFrame {
     }//GEN-LAST:event_menuItemPilaActionPerformed
 
     private void menuItemCargarLenguajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCargarLenguajeActionPerformed
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.showOpenDialog(this);
-        File file = fileChooser.getSelectedFile();
-        if(file!=null){
-            try {
-                String ruta = file.getPath();
-                AnalizadorLexico lexico = new AnalizadorLexico(new StringReader(archivo.leerArchivo(ruta)));
-                AnalizadorSintactico sintactico = new AnalizadorSintactico(lexico);
-                sintactico.parse();
-                if(sintactico.erroresSintacticos.size()>0 || sintactico.erroresSemanticos.size()>0){
-                    JOptionPane.showMessageDialog(null, "El archivo del lenguaje contiene errores");
-                    System.out.println("\nSINTACITCOS");
-                    for (int i = 0; i < sintactico.erroresSintacticos.size(); i++) {
-                        System.out.println(sintactico.erroresSintacticos.get(i).toString());
+        String[] options = {"Leer Pestaña", "Leer Archivo", "Cancelar"};
+        int seleccion = JOptionPane.showOptionDialog(null, "Es necesario que seleccione una opcion", "Lectura Lenguaje", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        System.out.println("Opcion Elegida: "+options[seleccion]);
+        
+        if(seleccion==0){
+            if(tabbedPanel.getComponentCount()>0){
+                try {
+                    JScrollPane jAux = (JScrollPane) tabbedPanel.getComponent(indiceTabbed);
+                    JTextArea areaAux = (JTextArea) jAux.getViewport().getComponent(0);
+                    String texto = areaAux.getText();
+                    AnalizadorLexico lexico = new AnalizadorLexico(new StringReader(texto));
+                    AnalizadorSintactico sintactico = new AnalizadorSintactico(lexico);
+                    sintactico.parse();
+                    if(sintactico.erroresSintacticos.size()>0 || sintactico.erroresSemanticos.size()>0){
+                        JOptionPane.showMessageDialog(null, "El archivo del lenguaje contiene errores");
+                        botonErrores.setEnabled(true);
+                        ventanaErrores.llenarErrores(sintactico.erroresSintacticos, sintactico.erroresSemanticos);
+
+                    }else{
+                        JOptionPane.showMessageDialog(null, "El archivo fue leido correctamente");
+                        botonErrores.setEnabled(true);
+                        generadorLenguaje.generar(sintactico);
+                        archivo.listarFicherosPorCarpeta(carpeta);
+                        buscarLenguajes();
+                        botonErrores.setEnabled(false);
                     }
-                    System.out.println("\nSEMANTICOS");
-                    for (int i = 0; i < sintactico.erroresSemanticos.size(); i++) {
-                        System.out.println(sintactico.erroresSemanticos.get(i).toString());
-                    }
-                    botonErrores.setEnabled(true);
-                    ventanaErrores.llenarErrores(sintactico.erroresSintacticos, sintactico.erroresSemanticos);
-                    
-                }else{
-                    JOptionPane.showMessageDialog(null, "El archivo fue leido correctamente");
-                    botonErrores.setEnabled(true);
-                    generadorLenguaje.generar(sintactico);
-                    archivo.listarFicherosPorCarpeta(carpeta);
-                    buscarLenguajes();
-                    botonErrores.setEnabled(false);
+                } catch (Exception ex) {
+                    Logger.getLogger(VentanaInicio.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } catch (Exception ex) {
-                Logger.getLogger(VentanaInicio.class.getName()).log(Level.SEVERE, null, ex);
+
+
+
+
+            }else{
+                JOptionPane.showMessageDialog(null, "No existe texto alguno");
             }
-            
+        }else if(seleccion==1){
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            fileChooser.showOpenDialog(this);
+            File file = fileChooser.getSelectedFile();
+            if(file!=null){
+                try {
+                    String ruta = file.getPath();
+                    AnalizadorLexico lexico = new AnalizadorLexico(new StringReader(archivo.leerArchivo(ruta)));
+                    AnalizadorSintactico sintactico = new AnalizadorSintactico(lexico);
+                    sintactico.parse();
+                    if(sintactico.erroresSintacticos.size()>0 || sintactico.erroresSemanticos.size()>0){
+                        JOptionPane.showMessageDialog(null, "El archivo del lenguaje contiene errores");
+                        botonErrores.setEnabled(true);
+                        ventanaErrores.llenarErrores(sintactico.erroresSintacticos, sintactico.erroresSemanticos);
+
+                    }else{
+                        JOptionPane.showMessageDialog(null, "El archivo fue leido correctamente");
+                        botonErrores.setEnabled(true);
+                        generadorLenguaje.generar(sintactico);
+                        archivo.listarFicherosPorCarpeta(carpeta);
+                        buscarLenguajes();
+                        botonErrores.setEnabled(false);
+                    }
+                } catch (Exception ex) {
+                    Logger.getLogger(VentanaInicio.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
         }
+        
         
         
     }//GEN-LAST:event_menuItemCargarLenguajeActionPerformed

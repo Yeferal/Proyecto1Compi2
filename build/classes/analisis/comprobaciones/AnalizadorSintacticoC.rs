@@ -1,2 +1,0 @@
-analisis.comprobaciones.CUP$AnalizadorSintacticoC$actions
-analisis.comprobaciones.AnalizadorSintacticoC

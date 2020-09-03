@@ -801,4 +801,5 @@ lo_quesea_semantica ::= CUALQUIER_SIM:a lo_quesea_semantica:b {:RESULT = (String
                 |COMENTARIO_A:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
                 |COMENTARIO_C:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
                 |SALTO_LINEA:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |LLAVES_A:a lo_quesea_semantica:b LLAVES_C:c lo_que_sea_1:d {:RESULT = (String)a+(String)b+(String)c+(String)d;:}
                 |;

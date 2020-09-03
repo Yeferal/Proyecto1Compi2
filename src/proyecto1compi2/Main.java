@@ -10,6 +10,7 @@ import automata.ManejadorLexico;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.LinkedList;
+import javax.swing.JOptionPane;
 import lalr.GeneradorEstadosLALR;
 import lalr.TablaProducciones;
 import lalr.TablaTerminalesNoT;
@@ -22,8 +23,9 @@ import ventanas.VentanaInicio;
 
 public class Main {
 
-    int b = 0;
+    
     public static void main(String[] args) throws IOException, Exception {
+        
         VentanaInicio ventanaInicio = new VentanaInicio();
         ventanaInicio.setVisible(true);
         
