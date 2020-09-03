@@ -186,6 +186,7 @@ public class GeneradorEstadosLALR {
             nuevo.agregarNuevaExpresion(produccion.getListaExpresiones().get(i));
         }
         nuevo.pivote = produccion.pivote+0;
+        nuevo.setNivel(produccion.getNivel());
         copiarSimbolosProducion(nuevo, produccion.getSimboloesPreAnalisis());
         //nuevo.setSimboloesPreAnalisis(produccion.getSimboloesPreAnalisis());
         return nuevo;

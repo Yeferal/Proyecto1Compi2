@@ -74,7 +74,7 @@ public class TransicionesEstado implements Serializable{
             if(listaTransiciones.get(i)==null){
                 System.out.print("--"+"\t");
             }else{
-                System.out.print(listaTransiciones.get(i).getTipoTransicion()+"\t");
+                System.out.print(listaTransiciones.get(i).getTipoTransicion()+","+listaTransiciones.get(i).getTokenTransicion()+"\t");
             }
             
         }

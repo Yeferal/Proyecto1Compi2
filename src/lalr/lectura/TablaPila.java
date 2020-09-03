@@ -28,7 +28,7 @@ public class TablaPila {
     private ArrayList<Produccion> listaProducciones;
     private ArrayList<Accion> listaAcciones;
     private boolean completo = true;
-    private boolean aceptado = false;
+    public boolean aceptado = false;
 
     public ArrayList<Accion> getListaAcciones() {
         return listaAcciones;
@@ -45,6 +45,7 @@ public class TablaPila {
         this.tablaTransiciones = tablaTransiciones;
         this.tablaTerminalesNoT = tablaTerminalesNoT;
         this.cola = cola;
+        aceptado = true;
         listaAcciones = new ArrayList<>();
         listarPalabrasReservadas();
         System.out.println("LISTA DE LA PILA");
@@ -68,6 +69,7 @@ public class TablaPila {
         }else{
             Accion acc = new Accion(getAccionPila(), getAccionPilaSim(), getAccionColaCadena(), "ERROR");
             listaAcciones.add(acc);
+            aceptado = false;
         }
         
     }
@@ -79,7 +81,7 @@ public class TablaPila {
                 //shift
                 System.out.println("Entro shift");
                 hacerSHIFT(celda);
-                if(completo){
+                if(completo && !cola.isEmpty() && !pila.isEmpty() && !pilaSimbolos.isEmpty()){
                     
                     int numeroEstado = pila.peek()-1;
                     String tokenCadena = cola.peek();
@@ -91,14 +93,19 @@ public class TablaPila {
                     }else{
                         Accion acc = new Accion(getAccionPila(), getAccionPilaSim(), getAccionColaCadena(), "ERROR");
                         listaAcciones.add(acc);
+                        aceptado = false;
                     }
+                }else{
+                    Accion acc = new Accion(getAccionPila(), getAccionPilaSim(), getAccionColaCadena(), "ERROR");
+                        listaAcciones.add(acc);
+                        aceptado = false;
                 }
                 break;
             case 2:
                 //goto
                 System.out.println("Entro goto");
                 hacerGOTO(celda);
-                if(completo){
+                if(completo && !cola.isEmpty() && !pila.isEmpty() && !pilaSimbolos.isEmpty()){
                     
                     int numeroEstado = pila.peek()-1;
                     String tokenCadena = cola.peek();
@@ -110,14 +117,19 @@ public class TablaPila {
                     }else{
                         Accion acc = new Accion(getAccionPila(), getAccionPilaSim(), getAccionColaCadena(), "ERROR");
                         listaAcciones.add(acc);
+                        aceptado = false;
                     }
+                }else{
+                    Accion acc = new Accion(getAccionPila(), getAccionPilaSim(), getAccionColaCadena(), "ERROR");
+                        listaAcciones.add(acc);
+                        aceptado = false;
                 }
                 break;
             case 3:
                 //reduce
                 System.out.println("Entro reduce");
                 hacerREDUCE(celda);
-                if(completo){
+                if(completo && !cola.isEmpty() && !pila.isEmpty() && !pilaSimbolos.isEmpty()){
                     
                     int numeroEstado = pila.peek()-1;
                     String tokenCadena = pilaSimbolos.peek();
@@ -129,7 +141,12 @@ public class TablaPila {
                     }else{
                         Accion acc = new Accion(getAccionPila(), getAccionPilaSim(), getAccionColaCadena(), "ERROR");
                         listaAcciones.add(acc);
+                        aceptado = false;
                     }
+                }else{
+                    Accion acc = new Accion(getAccionPila(), getAccionPilaSim(), getAccionColaCadena(), "ERROR");
+                        listaAcciones.add(acc);
+                        aceptado = false;
                 }
                 break;
             case 0:
@@ -198,6 +215,7 @@ public class TablaPila {
                 return texto;
             case 0:
                 texto = "ACEPTACION";
+                aceptado = true;
                 return texto;
                 default:
                     return "ERROR";
@@ -208,11 +226,11 @@ public class TablaPila {
     private void listarPalabrasReservadas(){
         tiposToken = new ArrayList<>();
         for (int i = 0; i < tablaTerminalesNoT.getTerminales().size(); i++) {
-            tiposToken.add(tablaTerminalesNoT.getTerminales().get(i));
+            tiposToken.add(tablaTerminalesNoT.getTerminales().get(i).getNombre());
         }
         tiposToken.add("$");
         for (int i = 0; i < tablaTerminalesNoT.getNoTerminales().size(); i++) {
-            tiposToken.add(tablaTerminalesNoT.getNoTerminales().get(i));
+            tiposToken.add(tablaTerminalesNoT.getNoTerminales().get(i).getNombre());
         }
         for (int i = 0; i < tiposToken.size(); i++) {
             System.out.print(i+","+tiposToken.get(i)+"\t");
@@ -254,6 +272,7 @@ public class TablaPila {
     
     private int obtenerNumColumna(String simbolo){
         for (int i = 0; i < tiposToken.size(); i++) {
+            System.out.println("Simbolo: "+simbolo);
             if(simbolo.equals(tiposToken.get(i))){
                 return i;
             }
@@ -304,11 +323,11 @@ public class TablaPila {
         System.out.println("");
         System.out.print("\t\t\t");
         for (int i = 0; i < tablaTerminalesNoT.getTerminales().size(); i++) {
-            System.out.print(tablaTerminalesNoT.getTerminales().get(i)+"\t");
+            System.out.print(tablaTerminalesNoT.getTerminales().get(i).getNombre()+"\t");
         }
         System.out.print("$\t");
         for (int i = 0; i < tablaTerminalesNoT.getNoTerminales().size(); i++) {
-            System.out.print(tablaTerminalesNoT.getNoTerminales().get(i)+"\t");
+            System.out.print(tablaTerminalesNoT.getNoTerminales().get(i).getNombre()+"\t");
         }
         System.out.println("");
     }

@@ -16,7 +16,7 @@ public class GenerarTablaLALR implements Serializable{
     
     
     private ArrayList<TransicionesEstado> tablaTransiciones;
-    private ArrayList<TransicionesEstado> tablaTransicionesNueva;
+    public ArrayList<TransicionesEstado> tablaTransicionesNueva;
     private ArrayList<EstadoLR> listaEstadoLR;
     private ArrayList<EstadosParecidos> listaParecido;
     private ArrayList<EstadosParecidos> listaParecidoConfirmados;

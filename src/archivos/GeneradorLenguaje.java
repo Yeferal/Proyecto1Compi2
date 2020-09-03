@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import lalr.GeneradorEstadosLALR;
 import lalr.TablaProducciones;
 import lalr.TablaTerminalesNoT;
@@ -27,6 +28,7 @@ import objetos.ExpresionRegular;
 import objetos.Lenguaje;
 import objetos.ManejadorNodos;
 import objetos.Nodo;
+import ventanas.VentanaInicio;
 
 /**
  *
@@ -34,6 +36,11 @@ import objetos.Nodo;
  */
 public class GeneradorLenguaje {
     
+    VentanaInicio ventanaInicio;
+
+    public GeneradorLenguaje(VentanaInicio ventanaInicio) {
+        this.ventanaInicio = ventanaInicio;
+    }
     
     public void generar(AnalizadorSintactico sintactico) throws Exception{
         Lenguaje lenguaje = sintactico.lenguaje;
@@ -96,7 +103,7 @@ public class GeneradorLenguaje {
         
         //===================================================================================
         TablaTransiciones tablaTransiciones = new TablaTransiciones();//
-        tablaTransiciones.generarTabla(generadorEstadosLALR.listaEstadoLR, tablaTerminalesNoT);
+        tablaTransiciones.generarTabla(generadorEstadosLALR.listaEstadoLR, tablaTerminalesNoT, tablaProducciones);
         //===================================================================================
         //generadorEstadosLALR.pintarProducciones();
         //tablaProducciones.desplegarProducciones();
@@ -111,7 +118,15 @@ public class GeneradorLenguaje {
         
         ArchivoLenguaje archivoLenguaje = new ArchivoLenguaje(lenguaje, ge, listaIgnorados, tablaTerminalesNoT, tablaProducciones, tablaTransiciones);
         
-        escribirArchivo(archivoLenguaje);
+        if(ventanaInicio.archivo.buscarLenguajeExistente(archivoLenguaje.getLenguaje().getNombre())){
+            int resp = JOptionPane.showConfirmDialog(null, "Ya existe un lenguaje con el mismo nombre!!!\n¿Desea reemplazarlo?", "Alerta!", JOptionPane.YES_NO_OPTION);
+            if(resp==0){
+                escribirArchivo(archivoLenguaje);
+                System.out.println("Escribio");
+            }
+        }else{
+            escribirArchivo(archivoLenguaje);
+        }
     }
     
     public ArrayList<String> listarIgnorados(ExpresionRegular exp){

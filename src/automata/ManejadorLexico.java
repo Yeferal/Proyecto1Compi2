@@ -8,6 +8,7 @@ public class ManejadorLexico {
     ArrayList<EstadoAutamata> listaFilasAutomatas;
     ArrayList<String> listaIgnorados = new ArrayList<>();
 //    ArrayList<String> listaIgnorados = new ArrayList<>();
+        public ArrayList<String> listaErroresLexicos = new ArrayList<>();
     public LinkedList<String> cola;
     String [] arregloCaracteres;
     int posicionArreglo = 0;
@@ -24,6 +25,7 @@ public class ManejadorLexico {
     public void iniciar(ArrayList<EstadoAutamata> listaFilasAutomatas ,String texto, ArrayList<String> listaIgnorados){
         this.listaIgnorados = listaIgnorados;
         this.listaFilasAutomatas = listaFilasAutomatas;
+        listaErroresLexicos.clear();
         iniciarRecorrido(listaFilasAutomatas, texto);
         cola.offer("$");
     }
@@ -63,6 +65,7 @@ public class ManejadorLexico {
                         transicionar(1);
                     }else{
                         System.out.println("Error: -"+getCaracter()+"-"); 
+                        listaErroresLexicos.add(getCaracter());
                         resultado = "";
                         posicionArreglo++;
                         transicionar(1);
@@ -82,19 +85,23 @@ public class ManejadorLexico {
     
     public void transicionar(int transicion){
         if(getCaracter()!=null){
+            System.out.println("NO. "+transicion+",\tcaracter: "+getCaracter()+""+",\tsig: "+listaFilasAutomatas.get(transicion-1).obtenerTransicion(listaFilasAutomatas.get(transicion-1).posicionCaracter));
             if(listaFilasAutomatas.get(transicion-1).obtenerTransicion(listaFilasAutomatas.get(transicion-1).posicionCaracter)!=0 && listaFilasAutomatas.get(transicion-1).comparaCaracter(getCaracter())){
                 int transicionNueva = listaFilasAutomatas.get(transicion-1).obtenerTransicion(listaFilasAutomatas.get(transicion-1).posicionCaracter);
-                resultado += getCaracter();
-                nombreTokenActual = listaFilasAutomatas.get(transicion-1).getListaEstados().get(listaFilasAutomatas.get(transicion-1).posicionCaracter).getToken();
-//                System.out.println("estado: s"+transicion+" , "+nombreTokenActual);
-                posicionArreglo++;
+//                resultado += getCaracter();
+//                nombreTokenActual = listaFilasAutomatas.get(transicion-1).getListaEstados().get(listaFilasAutomatas.get(transicion-1).posicionCaracter).getToken();
+////                System.out.println("estado: s"+transicion+" , "+nombreTokenActual);
+//                posicionArreglo++;
                 if(transicionNueva==0){
                     System.out.println("Transicion1: "+transicion+", "+"Reconocio "+nombreTokenActual+"\tToken"+": "+resultado);
                     cola.offer(nombreTokenActual);
                     resultado = "";
                     transicionar(1);
                 }else{
-                    transicionar(transicionNueva);
+                    resultado += getCaracter();
+                    nombreTokenActual = listaFilasAutomatas.get(transicion-1).getListaEstados().get(listaFilasAutomatas.get(transicion-1).posicionCaracter).getToken();
+                    posicionArreglo++;
+                        transicionar(transicionNueva);
                 }
             }else{
                 if(listaFilasAutomatas.get(transicion-1).isAceptacion){
@@ -112,6 +119,7 @@ public class ManejadorLexico {
                         transicionar(1);
                     }else{
                         System.out.println("Error: -"+getCaracter()+"-"); 
+                        listaErroresLexicos.add(getCaracter());
                         resultado = "";
                         posicionArreglo++;
                         transicionar(1);

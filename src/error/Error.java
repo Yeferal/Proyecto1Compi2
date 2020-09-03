@@ -62,7 +62,19 @@ public class Error {
     }
     
     public String toString(){
-        return "Token: "+token+",\tFila: "+fila+",\tColumna: "+columna+",\tTipoError: "+tipoError+",\tDescripcion: "+descripcion;
+        return "Token: "+token+",\tFila: "+fila+",\tColumna: "+columna+",\tTipoError: "+getTextoTipo()+",\tDescripcion: "+descripcion;
     }
     
+    public String getTextoTipo(){
+        switch(tipoError){
+            case 1:
+                return "Lexico";
+            case 2:
+                return "Sintactico";
+            case 3:
+                return "Semantico";
+                default:
+                    return "";
+        }
+    }
 }

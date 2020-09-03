@@ -37,17 +37,18 @@ public class VentanaInicio extends javax.swing.JFrame {
     public Archivo archivo = new Archivo();
     public ArrayList<ArchivoExtension> listaArchivos = new ArrayList<>();
     private ArrayList<Lenguaje> listaLenguajes = new ArrayList<>();
-    private GeneradorLenguaje generadorLenguaje = new GeneradorLenguaje();
+    private GeneradorLenguaje generadorLenguaje = new GeneradorLenguaje(this);
     public VentanaTablaLALR ventanaTablaLALR = new VentanaTablaLALR();
     private VentanaPila ventanaPila = new VentanaPila();
+    private VentanaErrores ventanaErrores = new VentanaErrores();
     final File carpeta = new File("Lenguajes");
     public int idLenguajeSeleccionado;
     
     public VentanaInicio() {
         initComponents();
         this.setLocationRelativeTo(null);
-        //menuVer.setEnabled(false);
-        //botonErrores.setEnabled(false);
+        menuVer.setEnabled(false);
+        botonErrores.setEnabled(false);
         archivo.listarFicherosPorCarpeta(carpeta);
         buscarLenguajes();
     }
@@ -65,6 +66,8 @@ public class VentanaInicio extends javax.swing.JFrame {
     }
     
     private void buscarLenguajes(){
+        menuLenguaje.removeAll();
+        listaLenguajes.clear();
         for (int i = 0; i < archivo.listaLenguajes.size(); i++) {
             listaLenguajes.add(archivo.listaLenguajes.get(i).getLenguaje());
             String nombre = archivo.listaLenguajes.get(i).getLenguaje().getNombre();
@@ -90,6 +93,14 @@ public class VentanaInicio extends javax.swing.JFrame {
         TablaPila tablaPila = new TablaPila();
         tablaPila.iniciarPila(archivoLenguaje.getTablaProducciones().listaProducciones, archivoLenguaje.getTablaTransiciones().tablaTransiciones, archivoLenguaje.getTablaTerminalesNoT(), cola);
         ventanaPila.llenarPila(tablaPila.getListaAcciones());
+        if(manejadorLexico.listaErroresLexicos.size()==0 && tablaPila.aceptado){
+            JOptionPane.showMessageDialog(null, "Lectura Realizada, entrada Aceptada");
+            botonErrores.setEnabled(false);
+        }else{
+            JOptionPane.showMessageDialog(null, "El texto de entrada no es correcto");
+            ventanaErrores.llenarErroresEntrada(manejadorLexico.listaErroresLexicos);
+            botonErrores.setEnabled(true);
+        }
     }
     
     private void generarPestania(ArchivoExtension ar, String nombre){
@@ -239,6 +250,11 @@ public class VentanaInicio extends javax.swing.JFrame {
         });
 
         botonErrores.setText("Errores");
+        botonErrores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonErroresActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
         panel.setLayout(panelLayout);
@@ -344,6 +360,11 @@ public class VentanaInicio extends javax.swing.JFrame {
         menuEjecutar.add(menuItemCargarLenguaje);
 
         menuItemBorrarLenguaje.setText("Borrar Lenguaje");
+        menuItemBorrarLenguaje.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemBorrarLenguajeActionPerformed(evt);
+            }
+        });
         menuEjecutar.add(menuItemBorrarLenguaje);
 
         menuBar.add(menuEjecutar);
@@ -462,10 +483,15 @@ public class VentanaInicio extends javax.swing.JFrame {
                         System.out.println(sintactico.erroresSemanticos.get(i).toString());
                     }
                     botonErrores.setEnabled(true);
+                    ventanaErrores.llenarErrores(sintactico.erroresSintacticos, sintactico.erroresSemanticos);
+                    
                 }else{
                     JOptionPane.showMessageDialog(null, "El archivo fue leido correctamente");
                     botonErrores.setEnabled(true);
                     generadorLenguaje.generar(sintactico);
+                    archivo.listarFicherosPorCarpeta(carpeta);
+                    buscarLenguajes();
+                    botonErrores.setEnabled(false);
                 }
             } catch (Exception ex) {
                 Logger.getLogger(VentanaInicio.class.getName()).log(Level.SEVERE, null, ex);
@@ -493,6 +519,8 @@ public class VentanaInicio extends javax.swing.JFrame {
                     if(arreglo[arreglo.length-1].equals(listaLenguajes.get(idLenguajeSeleccionado).getExtension())){
                        System.out.println(texto); 
                         compilarEntrada(texto);
+                        menuVer.setEnabled(true);
+                        
                     }else{
                         JOptionPane.showMessageDialog(null, "La extension del archivo no es la correcta");
                     }
@@ -501,6 +529,7 @@ public class VentanaInicio extends javax.swing.JFrame {
                 if(listaLenguajes.get(idLenguajeSeleccionado).getExtension()==null){
                     System.out.println(texto);
                     compilarEntrada(texto);
+                    menuVer.setEnabled(true);
                 }else{
                     JOptionPane.showMessageDialog(null, "El lenguaje selccionado requiere la extension:\n."+listaLenguajes.get(idLenguajeSeleccionado).getExtension());
                 }
@@ -510,20 +539,33 @@ public class VentanaInicio extends javax.swing.JFrame {
             
             
         }else{
-            System.out.println("No hay componentes");
+            JOptionPane.showMessageDialog(null, "No existe texto alguno");
         }
-        
-        
-        
-        
-        
-        
         
     }//GEN-LAST:event_menuItemCompilarActionPerformed
 
     private void menuItemTablaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemTablaActionPerformed
         ventanaTablaLALR.setVisible(true);
     }//GEN-LAST:event_menuItemTablaActionPerformed
+
+    private void menuItemBorrarLenguajeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemBorrarLenguajeActionPerformed
+        String[] carreras = new String[archivo.listaLenguajes.size()];
+        for (int i = 0; i < archivo.listaLenguajes.size(); i++) {
+            carreras[i] = archivo.listaLenguajes.get(i).getLenguaje().getNombre();
+        }
+        String resp = (String) JOptionPane.showInputDialog(null, "Seleccione una carrera a cursar", "Carrera", JOptionPane.DEFAULT_OPTION, null, carreras, carreras[0]);
+        System.out.println("Eligio: "+resp);
+        //menuLenguaje.removeAll();
+        if(resp!=null){
+            archivo.borrarLenguaje(resp);
+            archivo.listarFicherosPorCarpeta(carpeta);
+            buscarLenguajes();
+        }
+    }//GEN-LAST:event_menuItemBorrarLenguajeActionPerformed
+
+    private void botonErroresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonErroresActionPerformed
+        ventanaErrores.setVisible(true);
+    }//GEN-LAST:event_botonErroresActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

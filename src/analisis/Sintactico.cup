@@ -63,7 +63,9 @@ action code
     Lenguaje lenguaje;
     ManejadorDatos manejador = new ManejadorDatos();
     ExpresionRegular expIgnorados;
-    
+    int nivelesT;
+    int nivelesNoT;
+    int nivelesP;
 :}
 
 //Declaraciones 
@@ -73,6 +75,7 @@ terminal NOMBRE, VERSION, AUTOR, LANZAMIENTO, EXTENSION;
 terminal INTERROGACION, ASTERISCO, MAS, BETA, CORCHETE_A, CORCHETE_C, PARENTESIS_A;
 terminal PARENTESIS_C, GUION, SALTO_RESERV, TAB_RESERV, ESPACIO_BLANCO, COMILLAS, IGUAL, IGNORAR, LINEA;
 terminal TERMINAL, NO_TERMINAL, COMA, SALTO_LINEA, LLAVES_A, LLAVES_C, CUALQUIER_SIM;
+terminal ENTERO, REAL, CADENA;
 
 
 // declaracion no terminales
@@ -81,7 +84,7 @@ non terminal comentario_varias_lineas, num_version, bloque_code, lo_que_sea_bloq
 non terminal estructura_exp_regular, exp_regular, bloque_simbolos, bloque_gramatica, letras_min, letras_may;
 non terminal estructura_gramatica, estructura_produccion, valor , estructura_semantica, reglas_semanticas, lo_quesea_semantica;
 non terminal saltos1, cadena_identificadores, salto_simple, lo_que_sea_exp, ids, exp_regular_contenido, exp_regular_despues, exp_regular_p, s1;
-non terminal s2, identificacion;
+non terminal s2, identificacion, reservadas;
 
 //presedencia de menor a mayor
 //precedence left ASTERISCO, INTERROGACION, MAS;
@@ -100,7 +103,7 @@ start with INICIO;
 
 INICIO ::=   saltos {:lenguaje = new Lenguaje();:} bloque_inf {:System.out.println(lenguaje.toString());:}
              SEPARACION bloque_code  
-             SEPARACION saltos bloque_exp_regular {:parser.listaExpReg = listaExpReg; parser.expIgnorados = expIgnorados;:}
+             SEPARACION saltos bloque_exp_regular {:parser.listaExpReg = listaExpReg; parser.expIgnorados = expIgnorados; nivelesT=0; nivelesNoT=0;:}
              SEPARACION saltos bloque_simbolos {:parser.tablaTerminalesNoT = tablaTerminalesNoT; tablaProducciones = new TablaProducciones();:}
              SEPARACION saltos bloque_gramatica {:parser.tablaProducciones = tablaProducciones; 
                     parser.lenguaje = lenguaje;
@@ -517,10 +520,15 @@ lo_que_sea_exp ::= CUALQUIER_SIM:a lo_que_sea_exp:b {:RESULT = (String)a+(String
                 |LLAVES_C:a lo_que_sea_exp:b {:RESULT = (String)a+(String)b;:}
                 |{:RESULT = "";:};
 
-bloque_simbolos ::=  TERMINAL letras_min:a PUNTO_COMA {::} saltos bloque_simbolos
-                    | NO_TERMINAL letras_may:a PUNTO_COMA {::} saltos bloque_simbolos
+bloque_simbolos ::=  TERMINAL reservadas {:nivelesT++;:} letras_min:a PUNTO_COMA {::} saltos bloque_simbolos
+                    | NO_TERMINAL reservadas {:nivelesNoT++;:} letras_may:a PUNTO_COMA {::} saltos bloque_simbolos
                     | 
                     |error:e {:parser.syntax_error((Symbol)e);:} bloque_simbolos;
+
+reservadas ::= ENTERO
+            |CADENA
+            |REAL
+            |;
 
 letras_min ::=   IDENTIFICADOR:a COMA letras_min:b {: analizadorLexicoC = new AnalizadorLexicoC(new StringReader((String)a));
                     analizadorSintacticoC = new AnalizadorSintacticoC(analizadorLexicoC);
@@ -529,7 +537,7 @@ letras_min ::=   IDENTIFICADOR:a COMA letras_min:b {: analizadorLexicoC = new An
                         case 1:
                             System.out.println("Es un terminal: "+(String) a);
                             if(manejador.buscarExpresionExistenteN(listaExpReg,(String) a)){
-                                if(tablaTerminalesNoT.isExistTerminal((String) a)){
+                                if(tablaTerminalesNoT.isExistTerminal((String) a, nivelesT)){
                                 Error error = new Error((String) a,aright+1, aleft+1, 3, "Ya exsite un terminal con el mismo nombre");
                                 parser.erroresSemanticos.add(error);
                                 }
@@ -554,7 +562,7 @@ letras_min ::=   IDENTIFICADOR:a COMA letras_min:b {: analizadorLexicoC = new An
                         case 1:
                             System.out.println("Es un terminal: "+(String) a);
                             if(manejador.buscarExpresionExistenteN(listaExpReg,(String) a)){
-                                if(tablaTerminalesNoT.isExistTerminal((String) a)){
+                                if(tablaTerminalesNoT.isExistTerminal((String) a, nivelesT)){
                                 Error error = new Error((String) a,aright+1, aleft+1, 3, "Ya exsite un terminal con el mismo nombre");
                                 parser.erroresSemanticos.add(error);
                                 }
@@ -577,7 +585,7 @@ letras_min ::=   IDENTIFICADOR:a COMA letras_min:b {: analizadorLexicoC = new An
                         case 1:
                             System.out.println("Es un terminal: "+(String) a);
                             if(manejador.buscarExpresionExistenteN(listaExpReg,(String) a)){
-                                if(tablaTerminalesNoT.isExistTerminal((String) a)){
+                                if(tablaTerminalesNoT.isExistTerminal((String) a, nivelesT)){
                                 Error error = new Error((String) a,aright+1, aleft+1, 3, "Ya exsite un terminal con el mismo nombre");
                                 parser.erroresSemanticos.add(error);
                                 }
@@ -601,7 +609,7 @@ letras_min ::=   IDENTIFICADOR:a COMA letras_min:b {: analizadorLexicoC = new An
                         case 1:
                             System.out.println("Es un terminal: "+(String) a);
                             if(manejador.buscarExpresionExistenteN(listaExpReg,(String) a)){
-                                if(tablaTerminalesNoT.isExistTerminal((String) a)){
+                                if(tablaTerminalesNoT.isExistTerminal((String) a, nivelesT)){
                                 Error error = new Error((String) a,aright+1, aleft+1, 3, "Ya exsite un terminal con el mismo nombre");
                                 parser.erroresSemanticos.add(error);
                                 }
@@ -625,7 +633,7 @@ letras_may ::=   IDENTIFICADOR:a COMA letras_may:b {: analizadorLexicoC = new An
                     switch(analizadorSintacticoC.getTipo()){
                         case 2:
                             System.out.println("Es un no terminal: "+(String) a);
-                            if(tablaTerminalesNoT.isExistNoTerminal((String) a)){
+                            if(tablaTerminalesNoT.isExistNoTerminal((String) a, nivelesNoT)){
                                 Error error = new Error((String) a,aright+1, aleft+1, 3, "Ya exsite un no terminal con el mismo nombre");
                                 parser.erroresSemanticos.add(error);
                             }
@@ -643,7 +651,7 @@ letras_may ::=   IDENTIFICADOR:a COMA letras_may:b {: analizadorLexicoC = new An
                     switch(analizadorSintacticoC.getTipo()){
                         case 2:
                             System.out.println("Es un no terminal: "+(String) a);
-                            if(tablaTerminalesNoT.isExistNoTerminal((String) a)){
+                            if(tablaTerminalesNoT.isExistNoTerminal((String) a, nivelesNoT)){
                                Error error = new Error((String) a,aright+1, aleft+1, 3, "Ya exsite un no terminal con el mismo nombre");
                                parser.erroresSemanticos.add(error); 
                             }
@@ -661,7 +669,7 @@ letras_may ::=   IDENTIFICADOR:a COMA letras_may:b {: analizadorLexicoC = new An
                     switch(analizadorSintacticoC.getTipo()){
                         case 2:
                             System.out.println("Es un no terminal: "+(String) a);
-                            if(tablaTerminalesNoT.isExistNoTerminal((String) a)){
+                            if(tablaTerminalesNoT.isExistNoTerminal((String) a, nivelesNoT)){
                                 Error error = new Error((String) a,aright+1, aleft+1, 3, "Ya exsite un no terminal con el mismo nombre");
                                 parser.erroresSemanticos.add(error); 
                             }
@@ -679,7 +687,7 @@ letras_may ::=   IDENTIFICADOR:a COMA letras_may:b {: analizadorLexicoC = new An
                     switch(analizadorSintacticoC.getTipo()){
                         case 2:
                             System.out.println("Es un no terminal: "+(String) a);
-                            if(tablaTerminalesNoT.isExistNoTerminal((String) a)){
+                            if(tablaTerminalesNoT.isExistNoTerminal((String) a, nivelesNoT)){
                                 Error error = new Error((String) a,aright+1, aleft+1, 3, "Ya exsite un no terminal con el mismo nombre");
                                 parser.erroresSemanticos.add(error); 
                             }
@@ -699,9 +707,10 @@ bloque_gramatica ::= estructura_gramatica
 s1 ::=   estructura_gramatica
         |;
 
-estructura_gramatica ::= ids:a  {:corretaProduccion = true; produccion = new Produccion((String)a);:} DOBLE_PUNTO estructura_produccion estructura_semantica PUNTO_COMA {:
+estructura_gramatica ::= ids:a  {: nivelesP=0; corretaProduccion = true; produccion = new Produccion((String)a);:} DOBLE_PUNTO estructura_produccion estructura_semantica PUNTO_COMA {:
                             if(tablaTerminalesNoT.buscarNoTerminal((String)a)){
                                 if(corretaProduccion){
+                                    produccion.setNivel(nivelesP);
                                     tablaProducciones.agregarProduccion(produccion);
                                 }
                             }else{
@@ -717,7 +726,10 @@ s2 ::=   estructura_produccion
 estructura_produccion ::= ids:a valor {:
                             if(tablaTerminalesNoT.buscarExpresion((String)a)){
                                 produccion.agregarNuevaExpresion(new Expresion((String)a, tablaTerminalesNoT.getBandera()));
-                                
+                                if(nivelesP==0 && tablaTerminalesNoT.buscarTerminal((String)a)){
+                                    nivelesP= tablaTerminalesNoT.getTerminales().get(tablaTerminalesNoT.posicionTerminal).getNivel();
+                                    produccion.setNivel(nivelesP);
+                                }
                             }else{
                                Error error = new Error((String) a,aright+1, aleft+1, 3, "No a sido declarado el Simbolo");
                                parser.erroresSemanticos.add(error);
@@ -728,6 +740,10 @@ estructura_produccion ::= ids:a valor {:
                         | ids:a valor {:
                             if(tablaTerminalesNoT.buscarExpresion((String)a)){
                                 produccion.agregarNuevaExpresion(new Expresion((String)a, tablaTerminalesNoT.getBandera()));
+                                if(nivelesP==0 && tablaTerminalesNoT.buscarTerminal((String)a)){
+                                    nivelesP= tablaTerminalesNoT.getTerminales().get(tablaTerminalesNoT.posicionTerminal).getNivel();
+                                    produccion.setNivel(nivelesP);
+                                }
                             }else{
                                Error error = new Error((String) a,aright+1, aleft+1, 3, "No a sido declarado el Simbolo");
                                parser.erroresSemanticos.add(error);

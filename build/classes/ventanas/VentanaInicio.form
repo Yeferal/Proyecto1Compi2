@@ -96,6 +96,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Borrar Lenguaje"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuItemBorrarLenguajeActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>
@@ -218,6 +221,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Errores"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="botonErroresActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="labelLenguaje">
         </Component>

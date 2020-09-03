@@ -69,7 +69,9 @@ terminal	{System.out.println("TERMINAL: "+yytext()); return new Symbol(Simbolos.
 "//"		{System.out.println("COMENTARIO_SIMPLE: "+yytext()); return new Symbol(Simbolos.COMENTARIO_SIMPLE , yycolumn, yyline, yytext());}
 "/*"		{System.out.println("COMENTARIO_A: "+yytext()); return new Symbol(Simbolos.COMENTARIO_A , yycolumn, yyline, yytext());}
 "*/"		{System.out.println("COMENTARIO_C: "+yytext()); return new Symbol(Simbolos.COMENTARIO_C , yycolumn, yyline, yytext());}
-
+entero          {System.out.println("ENTERO: "+yytext()); return new Symbol(Simbolos.ENTERO , yycolumn, yyline, yytext());}
+real            {System.out.println("REAL: "+yytext()); return new Symbol(Simbolos.REAL , yycolumn, yyline, yytext());}
+cadena          {System.out.println("CADENA: "+yytext()); return new Symbol(Simbolos.CADENA , yycolumn, yyline, yytext());}
 
 <YYINITIAL> {
     {Espacio}                       {/*Ignore*/}

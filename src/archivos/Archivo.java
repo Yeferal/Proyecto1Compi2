@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -108,6 +109,7 @@ public class Archivo {
     }
     
     public void leerObjeto(String pd) throws IOException{
+        
         try {
             ArchivoLenguaje archivoLenguaje = null;
             ObjectInputStream leyendoFichero = new ObjectInputStream(
@@ -119,8 +121,28 @@ public class Archivo {
             listaLenguajes.add(archivoLenguaje);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Archivo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidClassException ex) {
+            //Logger.getLogger(Archivo.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
+    
+    public boolean buscarLenguajeExistente(String nombre){
+        for (int i = 0; i < listaLenguajes.size(); i++) {
+            if(listaLenguajes.get(i).getLenguaje().getNombre().equals(nombre)){
+                return true;
+            }
+        }
+        return false;   
+    }
+    
+    public void borrarLenguaje(String nombre){
+        File fichero = new File("Lenguajes/"+nombre+".dat");
+        if (fichero.delete())
+            System.out.println("El fichero ha sido borrado satisfactoriamente");
+         else
+            System.out.println("El fichero no puede ser borrado");
+    }
+        
         
 }

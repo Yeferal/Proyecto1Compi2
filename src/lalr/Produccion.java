@@ -9,7 +9,7 @@ import java.util.Comparator;
 public class Produccion implements Serializable{
     
     String nombreNoTerminal;
-    int id, pivote;
+    int id, pivote, nivel;
     public boolean transiciono = false;
     ArrayList<Expresion> listaExpresiones = new ArrayList<>();
     ArrayList<String> simboloesPreAnalisis = new ArrayList<>();
@@ -64,6 +64,15 @@ public class Produccion implements Serializable{
     public void setSimboloesPreAnalisis(ArrayList<String> simboloesPreAnalisis) {
         this.simboloesPreAnalisis = simboloesPreAnalisis;
     }
+
+    public int getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(int nivel) {
+        this.nivel = nivel;
+    }
+    
     
     public void desplegarExpresiones(){
         for (int i = 0; i < listaExpresiones.size(); i++) {
@@ -76,6 +85,7 @@ public class Produccion implements Serializable{
         if(listaExpresiones.size()== pivote){
             System.out.print(". ");
         }
+        System.out.print("\tNivel: "+nivel);
     }
     
     public void desplegarSimbolosPreAnalisis(){
