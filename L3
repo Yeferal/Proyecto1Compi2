@@ -1,9 +1,9 @@
 //Informacion del lenguaje
-nombre: javas;
+nombre: leng;
 version: 11.0.7;
 autor: sun Microsystems;
 lanzamiento: 1996;
-extension: java;
+extension: leng;
 %% //codigo fuente
 List<String> listString=new ArrayList<>();
 public void addString(String valor){

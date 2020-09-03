@@ -36,7 +36,7 @@ parser code
                 //ErrorG e = new ErrorG(s.right,s.left,(String) s.value,"Sintactico","Error Sintaxis token: "+(String) s.value+" ------ Linea: " + (s.right+1) + ",   Columna: " + (s.left+1));
                 //listaErrores.add(e);
                 Error error = new Error((String) s.value,s.right, s.left, 2, "Error Sintaxis token: "+(String) s.value+" ------ Linea: " + (s.right+1) + ",   Columna: " + (s.left+1));
-                erroresSemanticos.add(error);
+                erroresSintacticos.add(error);
                 setAccion("ERROR","Error Sintaxis token: Linea: " + (s.right+1) + ",   Columna: " + (s.left+1) + ",  Simbolo: " + s.value, "");
             }
     }
@@ -801,4 +801,5 @@ lo_quesea_semantica ::= CUALQUIER_SIM:a lo_quesea_semantica:b {:RESULT = (String
                 |COMENTARIO_A:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
                 |COMENTARIO_C:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
                 |SALTO_LINEA:a lo_quesea_semantica:b {:RESULT = (String)a+(String)b;:}
+                |LLAVES_A:a lo_quesea_semantica:b LLAVES_C:c lo_que_sea_1:d {:RESULT = (String)a+(String)b+(String)c+(String)d;:}
                 |;
