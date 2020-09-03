@@ -1,0 +1,29 @@
+//Informacion del lenguaje
+nombre: java;
+version: 11.0.7;
+autor: sun Microsystems;
+lanzamiento: 1996;
+extension: java;
+%% //codigo fuente
+List<String> listString=new ArrayList<>();
+public void addString(String valor){
+listString.add(valor);
+}
+public Integer suma(Integer numero1,Integer numero2){
+return numero1+numero2;
+}
+%% //Sección de expresiones regulares
+por = "*";
+igual = "=";
+x = "x";
+& = [\b\n\t]; /* Significa que cuando se encuentre este token deberá ser ignorado */
+%% //Seccion de simbolos terminales y no terminales
+terminal x, igual;
+terminal cadena por;
+no terminal S, E, V;
+%%
+S :: V igual E:val {printf("Resultado = %d",val);};
+S :: E:val {RESULT=val - val2;};
+E :: V {RESULT=val + val2;};
+V :: x:val {RESULT=val * val2;};
+V :: por E:val {RESULT=val / val2;};

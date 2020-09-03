@@ -1,0 +1,31 @@
+//Informacion del lenguaje
+nombre: phyton;
+autor: Microsystems;
+extension: prs;
+%% //codigo fuente
+List<String> listString=new ArrayList<>();
+public void addString(String valor){
+listString.add(valor);
+}
+public Integer suma(Integer numero1,Integer numero2){
+return numero1+numero2;
+}
+%% //Sección de expresiones regulares
+mas = "+";
+por = "*";
+id = [a-z]+;
+num = [0-9]+;
+pa = "(";
+pc = ")";
+& = [\b\n\t]; /* Significa que cuando se encuentre este token deberá ser ignorado */
+%% //Seccion de simbolos terminales y no terminales
+terminal mas, por, id, num, pa, pc;
+no terminal E, T, F;
+%%
+E :: E mas T;
+E :: T;
+T :: F por T;
+T :: F;
+F :: id;
+F :: num;
+F :: pa E pc;

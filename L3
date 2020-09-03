@@ -1,0 +1,27 @@
+//Informacion del lenguaje
+nombre: javas;
+version: 11.0.7;
+autor: sun Microsystems;
+lanzamiento: 1996;
+extension: java;
+%% //codigo fuente
+List<String> listString=new ArrayList<>();
+public void addString(String valor){
+listString.add(valor);
+}
+public Integer suma(Integer numero1,Integer numero2){
+return numero1+numero2;
+}
+%% //Sección de expresiones regulares
+num = [0-9]+;
+mas = "+";
+por = "*";
+& = [ \b\n\t]; /* Significa que cuando se encuentre este token deberá ser ignorado */
+%% //Seccion de simbolos terminales y no terminales
+terminal mas, num;
+terminal por;
+no terminal E;
+%%
+E :: E mas E;
+E :: E:val por E;
+E :: num;
